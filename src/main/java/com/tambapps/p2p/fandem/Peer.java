@@ -12,7 +12,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 public class Peer {
 
