@@ -1,6 +1,8 @@
 package com.tambapps.p2p.fandem;
 
+import com.tambapps.p2p.fandem.handshake.Handshake;
 import com.tambapps.p2p.fandem.util.FileProvider;
+import lombok.Getter;
 
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -10,19 +12,42 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.Map;
 
 public class PeerConnection implements Closeable {
+
+  /**
+   * Creates a new peer connection
+   * @param peer the remote peer
+   * @param socket the socket handling the connection
+   * @param handshake a nullable handshake
+   * @return a peer connection
+   * @throws IOException in case of I/O errors or handshake fail (if provided)
+   */
+  public static PeerConnection from(Peer peer, Socket socket,
+      Handshake handshake) throws IOException {
+    DataInputStream dis = new DataInputStream(socket.getInputStream());
+    DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+    Map<String, String> attributes = handshake != null ? handshake.apply(dos, dis) :
+        Collections.emptyMap();
+    return new PeerConnection(peer, socket, dis, dos, attributes);
+  }
 
   private final Peer peer;
   private final Socket socket;
   private final DataInputStream dis;
   private final DataOutputStream dos;
+  @Getter
+  private final Map<String, String> attributes;
 
-  public PeerConnection(Peer peer, Socket socket) throws IOException {
+  public PeerConnection(Peer peer, Socket socket, DataInputStream dis, DataOutputStream dos,
+      Map<String, String> attributes) {
     this.peer = peer;
     this.socket = socket;
-    dis = new DataInputStream(socket.getInputStream());
-    dos = new DataOutputStream(socket.getOutputStream());
+    this.dis = dis;
+    this.dos = dos;
+    this.attributes = attributes;
   }
 
   public void sendFile(File file) throws IOException {

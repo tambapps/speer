@@ -17,7 +17,7 @@ public abstract class AbstractConnectionTest {
   public void runTest(DangerousConsumer<PeerConnection> serverConsumer, DangerousConsumer<PeerConnection> clientConsumer) {
     Peer peer = Peer.findAvailablePeer();
     System.out.println("Peer " + peer);
-    Peerer server = new Peerer(peer);
+    Peerer server = new Peerer(peer, null);
     executor.submit(() -> {
       try (PeerConnection connection = server.listen()) {
         System.out.println("Server: found connection " + connection);
