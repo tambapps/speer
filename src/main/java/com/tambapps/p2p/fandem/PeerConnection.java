@@ -59,6 +59,15 @@ public class PeerConnection implements Closeable {
     }
   }
 
+
+  public DataInputStream getInputStream() {
+    return dis;
+  }
+
+  public DataOutputStream getOutputStream() {
+    return dos;
+  }
+
   public boolean isClosed() {
     return socket.isClosed();
   }
