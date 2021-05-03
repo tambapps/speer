@@ -15,15 +15,17 @@ public final class IPUtils {
 
   /**
    * from https://stackoverflow.com/questions/6064510/how-to-get-ip-address-of-the-device-from-code
+   *
    * @return return the ip address of the device
    */
   public static InetAddress getIpAddress() throws IOException {
-    ArrayList<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+    ArrayList<NetworkInterface> interfaces =
+        Collections.list(NetworkInterface.getNetworkInterfaces());
     return interfaces.stream()
         .filter(i -> !i.getName().contains("docker"))
         .flatMap(i -> Collections.list(i.getInetAddresses()).stream())
-        .filter(addr -> ! addr.isLoopbackAddress() &&
-        // ipV4
+        .filter(addr -> !addr.isLoopbackAddress() &&
+            // ipV4
             !addr.getHostAddress().contains(":"))
         .findFirst()
         .orElseThrow(() -> new IOException("Couldn't find IP"));
@@ -39,6 +41,7 @@ public final class IPUtils {
 
   /**
    * Get an available port
+   *
    * @param inetAddress the address of the host
    * @return an available port
    */
@@ -57,6 +60,7 @@ public final class IPUtils {
 
   /**
    * Returns a well formatted string of the given ip
+   *
    * @param address the address
    * @return a well formatted string of the given ip
    */
@@ -66,6 +70,7 @@ public final class IPUtils {
 
   /**
    * Returns the hex string of the given ip
+   *
    * @param address the address
    * @return the hex string of the given ip
    */
@@ -74,6 +79,7 @@ public final class IPUtils {
         .map(IPUtils::toHexString)
         .collect(Collectors.joining());
   }
+
   public static String toHexString(int i) {
     return toHexString(Integer.toString(i, 16));
   }

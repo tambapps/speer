@@ -28,14 +28,15 @@ public abstract class AbstractBasicHandshake implements Handshake {
 
   /**
    * Reads attributes of a handshake
-   * @param outputStream the output stream from which to read data
    *
+   * @param outputStream the output stream from which to read data
    * @throws IOException in case of I/0 errors or handshake fail
    */
   protected abstract void writeAttributes(DataOutputStream outputStream) throws IOException;
 
   /**
    * Reads attributes of a handshake
+   *
    * @param inputStream the input stream from which to read data
    * @return a map of attributes read from the handshake
    * @throws IOException in case of I/0 errors or handshake fail

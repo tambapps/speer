@@ -19,7 +19,8 @@ public class PeerConnection implements Closeable {
 
   /**
    * Creates a new peer connection
-   * @param peer the remote peer
+   *
+   * @param peer   the remote peer
    * @param socket the socket handling the connection
    * @return a peer connection
    * @throws IOException in case of I/O errors
@@ -30,8 +31,9 @@ public class PeerConnection implements Closeable {
 
   /**
    * Creates a new peer connection
-   * @param peer the remote peer
-   * @param socket the socket handling the connection
+   *
+   * @param peer      the remote peer
+   * @param socket    the socket handling the connection
    * @param handshake a nullable handshake
    * @return a peer connection
    * @throws IOException in case of I/O errors or handshake fail (if provided)
@@ -64,7 +66,7 @@ public class PeerConnection implements Closeable {
   public void sendFile(File file) throws IOException {
     dos.writeLong(file.length());
     dos.writeUTF(file.getName());
-    try (FileInputStream is = new FileInputStream(file))  {
+    try (FileInputStream is = new FileInputStream(file)) {
       // TODO make buffer size configurable
       byte[] buffer = new byte[1024];
       int len;

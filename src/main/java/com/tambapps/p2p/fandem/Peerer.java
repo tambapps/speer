@@ -30,6 +30,7 @@ public class Peerer {
       return PeerConnection.from(peer, serverSocket.accept(), handshake);
     }
   }
+
   public PeerConnection connect(Peer peer) throws IOException {
     return PeerConnection.from(peer, new Socket(peer.getIp(), peer.getPort()), handshake);
   }

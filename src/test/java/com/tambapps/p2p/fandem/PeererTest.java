@@ -24,8 +24,10 @@ public class PeererTest extends AbstractConnectionTest {
 
   @Test
   public void testConnect() {
-    runTest(connection -> {},
-        connection -> {});
+    runTest(connection -> {
+        },
+        connection -> {
+        });
   }
 
   @Test
