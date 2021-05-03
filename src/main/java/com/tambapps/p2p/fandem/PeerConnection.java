@@ -21,6 +21,17 @@ public class PeerConnection implements Closeable {
    * Creates a new peer connection
    * @param peer the remote peer
    * @param socket the socket handling the connection
+   * @return a peer connection
+   * @throws IOException in case of I/O errors
+   */
+  public static PeerConnection from(Peer peer, Socket socket) throws IOException {
+    return from(peer, socket, null);
+  }
+
+  /**
+   * Creates a new peer connection
+   * @param peer the remote peer
+   * @param socket the socket handling the connection
    * @param handshake a nullable handshake
    * @return a peer connection
    * @throws IOException in case of I/O errors or handshake fail (if provided)
