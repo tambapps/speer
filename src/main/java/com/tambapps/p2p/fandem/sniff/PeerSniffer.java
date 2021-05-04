@@ -16,28 +16,32 @@ public class PeerSniffer {
   private final SniffingStrategy strategy;
   private final SniffHandshake handshake;
 
-  public Peer sniffOne() throws IOException {
+  public Peer sniffOne() {
     strategy.reset();
-    if (!strategy.hasNext()) {
-      throw new NoPeerFoundException();
+    while (strategy.hasNext()) {
+      Peer sniffPeer = strategy.next();
+      try (Socket socket = new Socket(sniffPeer.getIp(), sniffPeer.getPort())) {
+        return handshake.apply(socket);
+      } catch (IOException e) {
+        // connection failed
+      }
     }
-    Peer sniffPeer = strategy.next();
-    try (Socket socket = new Socket(sniffPeer.getIp(), sniffPeer.getPort())) {
-      return handshake.apply(socket);
-    }
+    throw new NoPeerFoundException();
   }
 
-  public List<Peer> sniff() throws IOException {
+  public List<Peer> sniff() {
     List<Peer> peers = new ArrayList<>();
     sniff(peers::add);
     return peers;
   }
 
-  public void sniff(Consumer<Peer> peerConsumer) throws IOException {
+  public void sniff(Consumer<Peer> peerConsumer) {
     strategy.reset();
     for (Peer sniffPeer: strategy) {
       try (Socket socket = new Socket(sniffPeer.getIp(), sniffPeer.getPort())) {
         peerConsumer.accept(handshake.apply(socket));
+      } catch (IOException e) {
+        // connection failed
       }
     }
   }
