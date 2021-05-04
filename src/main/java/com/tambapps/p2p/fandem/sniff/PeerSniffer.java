@@ -3,6 +3,7 @@ package com.tambapps.p2p.fandem.sniff;
 import com.tambapps.p2p.fandem.Peer;
 import com.tambapps.p2p.fandem.exception.NoPeerFoundException;
 import com.tambapps.p2p.fandem.sniff.handshake.SniffHandshake;
+import com.tambapps.p2p.fandem.sniff.strategy.SniffingStrategy;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;

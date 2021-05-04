@@ -1,4 +1,4 @@
-package com.tambapps.p2p.fandem.sniff;
+package com.tambapps.p2p.fandem.sniff.strategy;
 
 import com.tambapps.p2p.fandem.Peer;
 
