@@ -20,6 +20,8 @@ public class Peerer {
   private Peer peer;
   private Handshake handshake;
 
+  // TODO make listen/connect function with onPeerFound listener (lambda expression)
+
   // TODO add a policy to tell whether accepting the accepted socket should be processed or if we
   //   should look for another
   public PeerConnection listen() throws IOException {

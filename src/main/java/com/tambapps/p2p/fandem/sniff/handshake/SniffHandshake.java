@@ -1,4 +1,4 @@
-package com.tambapps.p2p.fandem.sniff;
+package com.tambapps.p2p.fandem.sniff.handshake;
 
 // will try to connect to peers provided by SniffingStrategy (TODO remove the genric type from
 //   SniffingStrategy and put it here)
@@ -17,6 +17,7 @@ import java.net.Socket;
  */
 public interface SniffHandshake {
 
+  // TODO make it return a list of peers
   /**
    * Apply a sniff handshake.
    * @param outputStream
