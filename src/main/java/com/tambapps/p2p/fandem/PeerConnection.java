@@ -17,6 +17,18 @@ import java.util.Map;
 
 public class PeerConnection implements Closeable {
 
+
+  /**
+   * Creates a new peer connection
+   *
+   * @param peer   the remote peer
+   * @return a peer connection
+   * @throws IOException in case of I/O errors
+   */
+  public static PeerConnection from(Peer peer) throws IOException {
+    return from(peer, new Socket(peer.getIp(), peer.getPort()), null);
+  }
+
   /**
    * Creates a new peer connection
    *
@@ -47,6 +59,7 @@ public class PeerConnection implements Closeable {
     return new PeerConnection(peer, socket, dis, dos, attributes);
   }
 
+  // TODO peer field might be useless
   private final Peer peer;
   private final Socket socket;
   private final DataInputStream dis;

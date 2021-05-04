@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -79,6 +80,10 @@ public class Peer {
 
   public String getIpString() {
     return IPUtils.toString(ip);
+  }
+
+  public InetSocketAddress toSocketAddress() {
+    return new InetSocketAddress(getIp(), getPort());
   }
 
   public int[] ipFields() {
