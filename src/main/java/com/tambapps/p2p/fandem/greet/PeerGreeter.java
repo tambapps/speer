@@ -1,6 +1,7 @@
 package com.tambapps.p2p.fandem.greet;
 
 import com.tambapps.p2p.fandem.Peer;
+import com.tambapps.p2p.fandem.PeerConnection;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +24,6 @@ public class PeerGreeter {
   private final List<Peer> greetingPeers;
   private final PeerGreetings greetings;
 
-
   // server socket needs to be provided because the only way to interrupt serverSocket.accept()
   // is by calling serverSocket.close() from another thread
   public void greetOne(ServerSocket serverSocket) throws IOException {
@@ -42,6 +42,18 @@ public class PeerGreeter {
   public void greet(ServerSocket serverSocket) throws IOException {
     while (!Thread.interrupted()) {
       greetOne(serverSocket);
+    }
+  }
+
+  public void greet(PeerConnection connection) throws IOException {
+    while (!Thread.interrupted()) {
+      greetings.write(greetingPeers, connection.getOutputStream());
+    }
+  }
+
+  public void greet(PeerConnection connection, AtomicBoolean interrupt) throws IOException {
+    while (!interrupt.get() && !Thread.interrupted()) {
+      greetings.write(greetingPeers, connection.getOutputStream());
     }
   }
 
