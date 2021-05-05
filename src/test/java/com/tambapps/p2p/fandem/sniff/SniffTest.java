@@ -6,6 +6,7 @@ import com.tambapps.p2p.fandem.sniff.handshake.SniffHandshake2;
 import com.tambapps.p2p.fandem.sniff.strategy.LastOctetSniffingStrategy;
 import com.tambapps.p2p.fandem.sniff.strategy.SniffingStrategy;
 import com.tambapps.p2p.fandem.util.IPUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.io.DataInputStream;
@@ -16,6 +17,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 public class SniffTest {
 
   private static final InetAddress ADDRESS_1;
@@ -50,15 +52,14 @@ public class SniffTest {
     SniffHandler handler = new SniffHandler(Peer.of(ADDRESS_1, 8081), handshake,
         new LastOctetSniffingStrategy(ADDRESS_2, 8081),
         (p) -> {
-          System.out.println("HANDLER1: found peer " + p);
+      LOGGER.info("HANDLER1: found peer {}", p);
           return false;
         });
     executor.submit(() -> {
       try {
         handler.start();
       } catch (Exception e) {
-        System.err.println("HANDLER1: an error occurred");
-        e.printStackTrace();
+        LOGGER.error("HANDLER1: an error occurred", e);
       }
       return null;
     });
@@ -68,15 +69,14 @@ public class SniffTest {
     SniffHandler handler2 = new SniffHandler(Peer.of(ADDRESS_2, 8081), handshake,
         new LastOctetSniffingStrategy(ADDRESS_1, 8081),
         (p) -> {
-          System.out.println("HANDLER2: found peer " + p);
+          LOGGER.info("HANDLER2: found peer {}", p);
           return false;
         });
     executor.submit(() -> {
       try {
         handler2.start();
       } catch (Exception e) {
-        System.err.println("HANDLER2: an error occurred");
-        e.printStackTrace();
+        LOGGER.error("HANDLER2: an error occurred", e);
       }
       return null;
     });
