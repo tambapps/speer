@@ -29,12 +29,12 @@ public class Peerer {
       peer = Peer.findAvailablePeer();
     }
     try (ServerSocket serverSocket = new ServerSocket(peer.getPort(), 1, peer.getIp())) {
-      return PeerConnection.from(peer, serverSocket.accept(), handshake);
+      return PeerConnection.from(serverSocket.accept(), handshake);
     }
   }
 
   public PeerConnection connect(Peer peer) throws IOException {
-    return PeerConnection.from(peer, new Socket(peer.getIp(), peer.getPort()), handshake);
+    return PeerConnection.from(new Socket(peer.getIp(), peer.getPort()), handshake);
   }
 
   // TODO add method with peer sniffer

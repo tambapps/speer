@@ -7,17 +7,16 @@ import java.net.InetAddress;
 
 public class LastOctetSeekingStrategy implements SeekingStrategy {
 
-  // TODO complete me
   private final byte[] address;
   private final int port;
   private final byte start;
 
-  // TODO allow to specify the starting point
   private int i;
 
   public LastOctetSeekingStrategy(InetAddress address, int port) {
     this(address, port, (byte) 0);
   }
+
   public LastOctetSeekingStrategy(InetAddress address, int port, byte start) {
     this.address = address.getAddress();
     this.port = port;

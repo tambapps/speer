@@ -63,8 +63,9 @@ public class PeerGreeter {
 
   /**
    * method that greets peer from a non blocking socket, if a connection was found
-   * @param greetings the greetings
-   * @param greetingPeers the peers to greet with
+   *
+   * @param greetings           the greetings
+   * @param greetingPeers       the peers to greet with
    * @param serverSocketChannel the socket from which to check if a seeker has seeked
    * @throws IOException in case of I/O errors
    */

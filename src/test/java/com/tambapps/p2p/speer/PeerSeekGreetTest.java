@@ -29,7 +29,7 @@ public class PeerSeekGreetTest {
   );
   private final PeerSeeking seeking = inputStream ->
       Arrays.stream(inputStream.readUTF().split("\\n"))
-  .map(Peer::parse).collect(Collectors.toList());
+          .map(Peer::parse).collect(Collectors.toList());
 
   private final ExecutorCompletionService<Void> executor = new ExecutorCompletionService<>(
       Executors.newFixedThreadPool(2)

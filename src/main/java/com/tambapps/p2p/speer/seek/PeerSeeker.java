@@ -27,10 +27,10 @@ public class PeerSeeker {
      * Callback invoked when peers has been seeked.
      *
      * @param peers the seeked peers
-     *
      */
     void onPeersFound(List<Peer> peers);
   }
+
 
   private final PeerSeeking seeking;
   private final SeekListener listener;
