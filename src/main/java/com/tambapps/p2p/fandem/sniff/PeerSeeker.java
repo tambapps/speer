@@ -2,7 +2,6 @@ package com.tambapps.p2p.fandem.sniff;
 
 import com.tambapps.p2p.fandem.Peer;
 import com.tambapps.p2p.fandem.PeerConnection;
-import com.tambapps.p2p.fandem.sniff.handshake.SniffHandshake2;
 import com.tambapps.p2p.fandem.sniff.strategy.SniffingStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +32,7 @@ public class PeerSeeker {
   }
 
   private final SniffingStrategy sniffingStrategy;
-  private final SniffHandshake2 handshake;
+  private final PeerSeeking seeking;
   private final SeekListener listener;
   // peers not to sniff
   @Getter
@@ -90,7 +89,7 @@ public class PeerSeeker {
     }
     LOGGER.trace("Will seek {}", sniffPeer);
     try (PeerConnection connection = PeerConnection.from(sniffPeer)) {
-      Peer peer = handshake.read(connection.getInputStream());
+      Peer peer = seeking.read(connection.getInputStream());
       LOGGER.debug("Found peer {} while sniffing", peer);
       listener.onPeerFound(peer);
       return peer;
