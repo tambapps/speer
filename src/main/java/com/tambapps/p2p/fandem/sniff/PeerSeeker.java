@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 @Slf4j
 @AllArgsConstructor
@@ -32,16 +34,15 @@ public class PeerSeeker {
     void onPeersFound(List<Peer> peers);
   }
 
-  private final SniffingStrategy sniffingStrategy;
   private final PeerSeeking seeking;
   private final SeekListener listener;
   // peers not to sniff
   @Getter
   private final List<Peer> filteredPeers = new ArrayList<>();
 
-  public Optional<Peer> seekFirst(int howManyTimes) {
+  public Optional<Peer> seekFirst(SniffingStrategy sniffingStrategy, int howManyTimes) {
     for (int i = 0; i < howManyTimes; i++) {
-      Optional<Peer> peer = seekFirst();
+      Optional<Peer> peer = seekFirst(sniffingStrategy);
       if (peer.isPresent()) {
         return peer;
       }
@@ -49,10 +50,10 @@ public class PeerSeeker {
     return Optional.empty();
   }
 
-  public Optional<Peer> seekFirst() {
+  public Optional<Peer> seekFirst(SniffingStrategy sniffingStrategy) {
     sniffingStrategy.reset();
     for (Peer peer : sniffingStrategy) {
-      List<Peer> seekedPeers = doSniff(peer);
+      List<Peer> seekedPeers = seek(peer);
       if (!seekedPeers.isEmpty()) {
         return Optional.of(seekedPeers.get(0));
       }
@@ -60,28 +61,33 @@ public class PeerSeeker {
     return Optional.empty();
   }
 
-  public Set<Peer> seek(int howManyTimes) {
+  public Set<Peer> seek(SniffingStrategy sniffingStrategy, int howManyTimes) {
     Set<Peer> seekedPeers = new HashSet<>();
     for (int i = 0; i < howManyTimes; i++) {
-      seekedPeers.addAll(seek());
+      seekedPeers.addAll(seek(sniffingStrategy));
     }
     return seekedPeers;
   }
 
-  public Set<Peer> seek() {
+  public Set<Peer> seek(SniffingStrategy sniffingStrategy) {
     sniffingStrategy.reset();
     Set<Peer> seekedPeers = new HashSet<>();
     for (Peer peer : sniffingStrategy) {
-      seekedPeers.addAll(doSniff(peer));
+      seekedPeers.addAll(seek(peer));
     }
     return seekedPeers;
   }
 
-  public void addFilteredPeer(Peer peer) {
-    filteredPeers.add(peer);
+  public List<Future<List<Peer>>> seek(SniffingStrategy sniffingStrategy, ExecutorService executor) {
+    sniffingStrategy.reset();
+    List<Future<List<Peer>>> futures = new ArrayList<>();
+    for (Peer peer : sniffingStrategy) {
+      futures.add(executor.submit(() -> seek(peer)));
+    }
+    return futures;
   }
 
-  private List<Peer> doSniff(Peer sniffPeer) {
+  public List<Peer> seek(Peer sniffPeer) {
     if (filteredPeers.contains(sniffPeer)) {
       return Collections.emptyList();
     }
@@ -89,7 +95,9 @@ public class PeerSeeker {
     try (PeerConnection connection = PeerConnection.from(sniffPeer)) {
       List<Peer> peers = seeking.read(connection.getInputStream());
       LOGGER.debug("Found peers {}", peers);
-      listener.onPeersFound(peers);
+      if (listener != null) {
+        listener.onPeersFound(peers);
+      }
       return peers;
     } catch (IOException e) {
       // connection or handshake failed
@@ -99,4 +107,9 @@ public class PeerSeeker {
     }
     return Collections.emptyList();
   }
+
+  public void addFilteredPeer(Peer peer) {
+    filteredPeers.add(peer);
+  }
+
 }
