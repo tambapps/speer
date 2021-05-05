@@ -19,7 +19,14 @@ public class SniffHandler {
 
   interface SniffListener {
     // TODO add more event
-    void onPeerFound(Peer peer);
+
+    /**
+     * Callback invoked when a peer has been sniffed.
+     *
+     * @param peer the sniffed peer
+     * @return true if the handler should stop handling sniffs
+     */
+    boolean onPeerFound(Peer peer);
   }
 
   private final Peer peer;
@@ -65,7 +72,9 @@ public class SniffHandler {
           // TODO use logger (and add listener to exception?)
           System.err.println(e);
         }
-        sniff();
+        if (sniff()) {
+          active.set(false);
+        }
       }
     }
   }
@@ -81,22 +90,27 @@ public class SniffHandler {
     }
   }
 
-  private void sniff() {
+  // return true if must stop loop
+  private boolean sniff() {
     if (!sniffingStrategy.hasNext()) {
       sniffingStrategy.reset();
       // if there still isn't no sniff after having reset the strategy,
       // there is no peer to sniff at all
       if (!sniffingStrategy.hasNext()) {
-        return;
+        return false;
       }
     }
     Peer sniffPeer = sniffingStrategy.next();
+    if (sniffPeer.equals(peer)) {
+      // prevent sniffing itself
+      return false;
+    }
     try (PeerConnection connection = PeerConnection.from(sniffPeer)) {
       Peer peer = handshake.read(connection.getInputStream());
-      listener.onPeerFound(peer);
+      return listener.onPeerFound(peer);
     } catch (IOException e) {
       // connection or handshake failed
     }
-
+    return false;
   }
 }
