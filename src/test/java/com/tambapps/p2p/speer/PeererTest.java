@@ -2,22 +2,16 @@ package com.tambapps.p2p.speer;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class PeererTest extends AbstractConnectionTest {
-
-  private static File file;
-
-  @BeforeAll
-  public static void init() {
-    file = new File(PeererTest.class.getResource("/file.txt").getFile());
-  }
 
   @Test
   public void testConnect() {
@@ -32,9 +26,12 @@ public class PeererTest extends AbstractConnectionTest {
     File temp = Files.createTempFile("temp", ".txt").toFile();
     temp.deleteOnExit();
 
+    File file = new File(URLDecoder.decode(
+        PeererTest.class.getResource("/file.txt").getFile(), StandardCharsets.UTF_8.name()));
     runTest(connection -> connection.sendFile(file),
         connection -> connection.receiveFile(temp));
 
+    PeererTest.class.getResource("/file.txt").openStream();
     assertTrue(contentEquals(temp, file));
   }
 
