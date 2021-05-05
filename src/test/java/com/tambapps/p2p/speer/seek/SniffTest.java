@@ -2,7 +2,7 @@ package com.tambapps.p2p.speer.seek;
 
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.seek.handshake.SniffHandshake2;
-import com.tambapps.p2p.speer.seek.strategy.LastOctetSniffingStrategy;
+import com.tambapps.p2p.speer.seek.strategy.LastOctetSeekingStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +47,7 @@ public class SniffTest {
   @Test
   public void test() throws Exception {
     SniffHandler handler = new SniffHandler(Peer.of(ADDRESS_1, 8081), handshake,
-        new LastOctetSniffingStrategy(ADDRESS_2, 8081),
+        new LastOctetSeekingStrategy(ADDRESS_2, 8081),
         (p) -> {
       LOGGER.info("HANDLER1: found peer {}", p);
           return false;
@@ -64,7 +64,7 @@ public class SniffTest {
     Thread.sleep(250L);
 
     SniffHandler handler2 = new SniffHandler(Peer.of(ADDRESS_2, 8081), handshake,
-        new LastOctetSniffingStrategy(ADDRESS_1, 8081),
+        new LastOctetSeekingStrategy(ADDRESS_1, 8081),
         (p) -> {
           LOGGER.info("HANDLER2: found peer {}", p);
           return false;

@@ -9,13 +9,13 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LastOctetSniffingStrategyTest {
+public class LastOctetSeekingStrategyTest {
 
   @Test
   public void test() {
     int port = 23;
     InetAddress address = InetAddress.getLoopbackAddress();
-    LastOctetSniffingStrategy strategy = new LastOctetSniffingStrategy(address, port);
+    LastOctetSeekingStrategy strategy = new LastOctetSeekingStrategy(address, port);
 
     List<Peer> peers = new ArrayList<>();
     for (Peer peer : strategy) {
@@ -40,7 +40,7 @@ public class LastOctetSniffingStrategyTest {
   public void testStartingFromMiddle() {
     int port = 23;
     InetAddress address = InetAddress.getLoopbackAddress();
-    LastOctetSniffingStrategy strategy = new LastOctetSniffingStrategy(address, port, (byte) 23);
+    LastOctetSeekingStrategy strategy = new LastOctetSeekingStrategy(address, port, (byte) 23);
 
     for (Peer peer : strategy) {
       System.out.println(peer);

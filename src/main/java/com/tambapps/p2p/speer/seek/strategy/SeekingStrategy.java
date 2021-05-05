@@ -4,7 +4,7 @@ import com.tambapps.p2p.speer.Peer;
 
 import java.util.Iterator;
 
-public interface SniffingStrategy extends Iterator<Peer>, Iterable<Peer> {
+public interface SeekingStrategy extends Iterator<Peer>, Iterable<Peer> {
 
   @Override
   default Iterator<Peer> iterator() {

@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 
 import java.net.InetAddress;
 
-public class LastOctetSniffingStrategy implements SniffingStrategy {
+public class LastOctetSeekingStrategy implements SeekingStrategy {
 
   // TODO complete me
   private final byte[] address;
@@ -15,10 +15,10 @@ public class LastOctetSniffingStrategy implements SniffingStrategy {
   // TODO allow to specify the starting point
   private int i;
 
-  public LastOctetSniffingStrategy(InetAddress address, int port) {
+  public LastOctetSeekingStrategy(InetAddress address, int port) {
     this(address, port, (byte) 0);
   }
-  public LastOctetSniffingStrategy(InetAddress address, int port, byte start) {
+  public LastOctetSeekingStrategy(InetAddress address, int port, byte start) {
     this.address = address.getAddress();
     this.port = port;
     this.start = start;

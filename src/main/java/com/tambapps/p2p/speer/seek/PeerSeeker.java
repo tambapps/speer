@@ -2,7 +2,7 @@ package com.tambapps.p2p.speer.seek;
 
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.PeerConnection;
-import com.tambapps.p2p.speer.seek.strategy.SniffingStrategy;
+import com.tambapps.p2p.speer.seek.strategy.SeekingStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +40,9 @@ public class PeerSeeker {
   @Getter
   private final List<Peer> filteredPeers = new ArrayList<>();
 
-  public Optional<Peer> seekFirst(SniffingStrategy sniffingStrategy, int howManyTimes) {
+  public Optional<Peer> seekFirst(SeekingStrategy seekingStrategy, int howManyTimes) {
     for (int i = 0; i < howManyTimes; i++) {
-      Optional<Peer> peer = seekFirst(sniffingStrategy);
+      Optional<Peer> peer = seekFirst(seekingStrategy);
       if (peer.isPresent()) {
         return peer;
       }
@@ -50,9 +50,9 @@ public class PeerSeeker {
     return Optional.empty();
   }
 
-  public Optional<Peer> seekFirst(SniffingStrategy sniffingStrategy) {
-    sniffingStrategy.reset();
-    for (Peer peer : sniffingStrategy) {
+  public Optional<Peer> seekFirst(SeekingStrategy seekingStrategy) {
+    seekingStrategy.reset();
+    for (Peer peer : seekingStrategy) {
       List<Peer> seekedPeers = seek(peer);
       if (!seekedPeers.isEmpty()) {
         return Optional.of(seekedPeers.get(0));
@@ -61,27 +61,27 @@ public class PeerSeeker {
     return Optional.empty();
   }
 
-  public Set<Peer> seek(SniffingStrategy sniffingStrategy, int howManyTimes) {
+  public Set<Peer> seek(SeekingStrategy seekingStrategy, int howManyTimes) {
     Set<Peer> seekedPeers = new HashSet<>();
     for (int i = 0; i < howManyTimes; i++) {
-      seekedPeers.addAll(seek(sniffingStrategy));
+      seekedPeers.addAll(seek(seekingStrategy));
     }
     return seekedPeers;
   }
 
-  public Set<Peer> seek(SniffingStrategy sniffingStrategy) {
-    sniffingStrategy.reset();
+  public Set<Peer> seek(SeekingStrategy seekingStrategy) {
+    seekingStrategy.reset();
     Set<Peer> seekedPeers = new HashSet<>();
-    for (Peer peer : sniffingStrategy) {
+    for (Peer peer : seekingStrategy) {
       seekedPeers.addAll(seek(peer));
     }
     return seekedPeers;
   }
 
-  public List<Future<List<Peer>>> seek(SniffingStrategy sniffingStrategy, ExecutorService executor) {
-    sniffingStrategy.reset();
+  public List<Future<List<Peer>>> seek(SeekingStrategy seekingStrategy, ExecutorService executor) {
+    seekingStrategy.reset();
     List<Future<List<Peer>>> futures = new ArrayList<>();
-    for (Peer peer : sniffingStrategy) {
+    for (Peer peer : seekingStrategy) {
       futures.add(executor.submit(() -> seek(peer)));
     }
     return futures;

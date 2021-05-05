@@ -3,7 +3,7 @@ package com.tambapps.p2p.speer.seek;
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.PeerConnection;
 import com.tambapps.p2p.speer.seek.handshake.SniffHandshake2;
-import com.tambapps.p2p.speer.seek.strategy.SniffingStrategy;
+import com.tambapps.p2p.speer.seek.strategy.SeekingStrategy;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayOutputStream;
@@ -35,14 +35,14 @@ public class SniffHandler {
   private final Peer peer;
   private final SniffHandshake2 handshake;
   private final AtomicBoolean active = new AtomicBoolean();
-  private final SniffingStrategy sniffingStrategy;
+  private final SeekingStrategy seekingStrategy;
   private final SniffListener listener;
 
   public SniffHandler(Peer peer, SniffHandshake2 handshake,
-      SniffingStrategy sniffingStrategy, SniffListener listener) {
+      SeekingStrategy seekingStrategy, SniffListener listener) {
     this.peer = peer;
     this.handshake = handshake;
-    this.sniffingStrategy = sniffingStrategy;
+    this.seekingStrategy = seekingStrategy;
     this.listener = listener;
   }
 
@@ -63,7 +63,7 @@ public class SniffHandler {
 
   // blocking
   public void start() throws IOException {
-    sniffingStrategy.reset();
+    seekingStrategy.reset();
     active.set(true);
     try (ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
       LOGGER.trace("Opened server socket channel");
@@ -102,16 +102,16 @@ public class SniffHandler {
   // return true if must stop loop
   private boolean sniff() {
     LOGGER.trace("Will sniff");
-    if (!sniffingStrategy.hasNext()) {
-      sniffingStrategy.reset();
+    if (!seekingStrategy.hasNext()) {
+      seekingStrategy.reset();
       // if there still isn't no sniff after having reset the strategy,
       // there is no peer to sniff at all
-      if (!sniffingStrategy.hasNext()) {
+      if (!seekingStrategy.hasNext()) {
         LOGGER.trace("There is no peers to sniff");
         return false;
       }
     }
-    Peer sniffPeer = sniffingStrategy.next();
+    Peer sniffPeer = seekingStrategy.next();
     if (sniffPeer.equals(peer)) {
       // prevent sniffing itself
       LOGGER.trace("Won't sniff myself");
