@@ -22,9 +22,7 @@ import java.util.concurrent.Future;
 @AllArgsConstructor
 public class PeerSeeker {
 
-  interface SeekListener {
-    // TODO add more event?
-
+  public interface SeekListener {
     /**
      * Callback invoked when peers has been seeked.
      *
@@ -39,6 +37,10 @@ public class PeerSeeker {
   // peers not to sniff
   @Getter
   private final List<Peer> filteredPeers = new ArrayList<>();
+
+  public PeerSeeker(PeerSeeking seeking) {
+    this(seeking, null);
+  }
 
   public Optional<Peer> seekFirst(SeekingStrategy seekingStrategy, int howManyTimes) {
     for (int i = 0; i < howManyTimes; i++) {

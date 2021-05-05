@@ -19,6 +19,16 @@ public class Peer {
 
   public static final int DEFAULT_PORT = 8081;
 
+  public static Peer of(String address, int port) {
+    InetAddress inetAddress;
+    try {
+      inetAddress = InetAddress.getByName(address);
+    } catch (UnknownHostException e) {
+      throw new IllegalArgumentException("Unknown host", e);
+    }
+    return new Peer(inetAddress, port);
+  }
+
   public static Peer of(InetAddress address, int port) {
     return new Peer(address, port);
   }
@@ -27,13 +37,18 @@ public class Peer {
     return new Peer(socket.getInetAddress(), socket.getPort());
   }
 
-  public static Peer parse(String peer) throws UnknownHostException {
+  public static Peer parse(String peer) {
     int index = peer.indexOf(":");
     if (index <= 0) {
       throw new IllegalArgumentException(String.format("'%s' is malformed", peer));
     }
-    return of(InetAddress.getByName(peer.substring(0, index)),
-        Integer.parseInt(peer.substring(index + 1)));
+    InetAddress address;
+    try {
+      address = InetAddress.getByName(peer.substring(0, index));
+    } catch (UnknownHostException e) {
+      throw new IllegalArgumentException("Unknown host", e);
+    }
+    return of(address, Integer.parseInt(peer.substring(index + 1)));
   }
 
   public static Peer fromHexString(String hexString) throws UnknownHostException {
@@ -41,7 +56,7 @@ public class Peer {
         !hexString.chars().allMatch(c -> Character.isDigit(c)
             || c >= 'A' && c <= 'F' ||
             c >= 'a' && c <= 'f')) {
-      throw new IllegalArgumentException(String.format("'%s' is malformed"));
+      throw new IllegalArgumentException(String.format("'%s' is malformed", hexString));
     }
     int[] address = new int[4];
     for (int i = 0; i < address.length; i++) {
@@ -70,7 +85,6 @@ public class Peer {
   public String toString() {
     return String.format("%s:%d", getIpString(), port);
   }
-
 
   public String toHexString() {
     String ipHex = IPUtils.toHexString(ip);
