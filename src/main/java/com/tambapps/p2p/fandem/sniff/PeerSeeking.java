@@ -4,9 +4,10 @@ import com.tambapps.p2p.fandem.Peer;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.List;
 
 public interface PeerSeeking {
 
-  Peer read(DataInputStream inputStream) throws IOException;
+  List<Peer> read(DataInputStream inputStream) throws IOException;
 
 }

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +24,12 @@ public class PeerSeeker {
     // TODO add more event?
 
     /**
-     * Callback invoked when a peer has been seeked.
+     * Callback invoked when peers has been seeked.
      *
-     * @param peer the seeked peer
+     * @param peers the seeked peers
      *
      */
-    void onPeerFound(Peer peer);
+    void onPeersFound(List<Peer> peers);
   }
 
   private final SniffingStrategy sniffingStrategy;
@@ -51,9 +52,9 @@ public class PeerSeeker {
   public Optional<Peer> seekFirst() {
     sniffingStrategy.reset();
     for (Peer peer : sniffingStrategy) {
-      Peer seekedPeer = doSniff(peer);
-      if (seekedPeer != null) {
-        return Optional.of(seekedPeer);
+      List<Peer> seekedPeers = doSniff(peer);
+      if (!seekedPeers.isEmpty()) {
+        return Optional.of(seekedPeers.get(0));
       }
     }
     return Optional.empty();
@@ -71,10 +72,7 @@ public class PeerSeeker {
     sniffingStrategy.reset();
     Set<Peer> seekedPeers = new HashSet<>();
     for (Peer peer : sniffingStrategy) {
-      Peer seekedPeer = doSniff(peer);
-      if (seekedPeer != null) {
-        seekedPeers.add(seekedPeer);
-      }
+      seekedPeers.addAll(doSniff(peer));
     }
     return seekedPeers;
   }
@@ -83,22 +81,22 @@ public class PeerSeeker {
     filteredPeers.add(peer);
   }
 
-  private Peer doSniff(Peer sniffPeer) {
+  private List<Peer> doSniff(Peer sniffPeer) {
     if (filteredPeers.contains(sniffPeer)) {
-      return null;
+      return Collections.emptyList();
     }
     LOGGER.trace("Will seek {}", sniffPeer);
     try (PeerConnection connection = PeerConnection.from(sniffPeer)) {
-      Peer peer = seeking.read(connection.getInputStream());
-      LOGGER.debug("Found peer {} while sniffing", peer);
-      listener.onPeerFound(peer);
-      return peer;
+      List<Peer> peers = seeking.read(connection.getInputStream());
+      LOGGER.debug("Found peers {}", peers);
+      listener.onPeersFound(peers);
+      return peers;
     } catch (IOException e) {
       // connection or handshake failed
       if (!(e instanceof ConnectException)) {
         LOGGER.debug("Couldn't connect to {}", sniffPeer, e);
       }
     }
-    return null;
+    return Collections.emptyList();
   }
 }
