@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SniffHandler {
 
   interface SniffListener {
+    // TODO add more event
     void onPeerFound(Peer peer);
   }
 
@@ -27,8 +28,7 @@ public class SniffHandler {
   private final SniffingStrategy sniffingStrategy;
   private final SniffListener listener;
 
-  public SniffHandler(Peer peer,
-      SniffHandshake2 handshake,
+  public SniffHandler(Peer peer, SniffHandshake2 handshake,
       SniffingStrategy sniffingStrategy, SniffListener listener) {
     this.peer = peer;
     this.handshake = handshake;
@@ -53,12 +53,18 @@ public class SniffHandler {
 
   // blocking
   public void start() throws IOException {
+    sniffingStrategy.reset();
     active.set(true);
     try (ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
       serverSocketChannel.configureBlocking(false);
       serverSocketChannel.bind(peer.toSocketAddress());
       while (active.get() && !Thread.interrupted()) {
-        handleSniff(serverSocketChannel);
+        try {
+          handleSniff(serverSocketChannel);
+        } catch (IOException e) {
+          // TODO use logger (and add listener to exception?)
+          System.err.println(e);
+        }
         sniff();
       }
     }
@@ -69,7 +75,7 @@ public class SniffHandler {
     if (socketChannel != null) {
       socketChannel.configureBlocking(false);
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      handshake.write(new DataOutputStream(outputStream));
+      handshake.write(peer, new DataOutputStream(outputStream));
       socketChannel.write(ByteBuffer.wrap(outputStream.toByteArray())); // can be non-blocking
       socketChannel.close();
     }

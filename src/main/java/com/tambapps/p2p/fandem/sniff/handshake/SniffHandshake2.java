@@ -11,8 +11,8 @@ import java.net.Socket;
 
 public interface SniffHandshake2 {
 
-  Peer read(DataInputStream inputStream);
+  Peer read(DataInputStream inputStream) throws IOException;
 
-  void write(DataOutputStream outputStream);
+  void write(Peer peer, DataOutputStream outputStream) throws IOException;
 
 }
