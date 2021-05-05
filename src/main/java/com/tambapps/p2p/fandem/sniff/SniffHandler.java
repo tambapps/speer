@@ -86,12 +86,15 @@ public class SniffHandler {
     LOGGER.trace("Will handle sniff");
     SocketChannel socketChannel = serverSocketChannel.accept(); // non-blocking
     if (socketChannel != null) {
-      LOGGER.debug("Peer {} sniffed me!", socketChannel.getRemoteAddress());
-      socketChannel.configureBlocking(false);
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      handshake.write(peer, new DataOutputStream(outputStream));
-      socketChannel.write(ByteBuffer.wrap(outputStream.toByteArray())); // can be non-blocking
-      socketChannel.close();
+      try {
+        LOGGER.debug("Peer {} sniffed me!", socketChannel.getRemoteAddress());
+        socketChannel.configureBlocking(false);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        handshake.write(peer, new DataOutputStream(outputStream));
+        socketChannel.write(ByteBuffer.wrap(outputStream.toByteArray())); // can be non-blocking
+      } finally {
+        socketChannel.close();
+      }
     }
     LOGGER.trace("Sniff handled");
   }
@@ -104,7 +107,7 @@ public class SniffHandler {
       // if there still isn't no sniff after having reset the strategy,
       // there is no peer to sniff at all
       if (!sniffingStrategy.hasNext()) {
-        LOGGER.trace("There is peers to sniff");
+        LOGGER.trace("There is no peers to sniff");
         return false;
       }
     }
