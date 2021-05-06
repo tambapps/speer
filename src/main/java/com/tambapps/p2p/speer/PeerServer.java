@@ -5,6 +5,7 @@ import com.tambapps.p2p.speer.handshake.Handshake;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 
 public class PeerServer implements Closeable {
@@ -13,7 +14,14 @@ public class PeerServer implements Closeable {
   private final Handshake handshake;
 
   public PeerServer() throws IOException {
-    this(new ServerSocket(), null);
+    this(new ServerSocket());
+  }
+  public PeerServer(Peer peer) throws IOException {
+    this(peer, null);
+  }
+
+  public PeerServer(Peer peer, Handshake handshake) throws IOException {
+    this(new ServerSocket(peer.getPort(), 10, peer.getIp()), handshake);
   }
 
   public PeerServer(ServerSocket serverSocket) {
@@ -31,6 +39,14 @@ public class PeerServer implements Closeable {
 
   public void setAcceptTimeout(int timeoutMillis) throws SocketException {
     serverSocket.setSoTimeout(timeoutMillis);
+  }
+
+  public void bind(Peer peer) throws IOException {
+    bind(peer.toSocketAddress());
+  }
+
+  public void bind(SocketAddress address) throws IOException {
+    serverSocket.bind(address);
   }
 
   public boolean isClosed() {
