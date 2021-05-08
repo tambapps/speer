@@ -1,7 +1,7 @@
 package com.tambapps.p2p.speer.seek.strategy;
 
 import com.tambapps.p2p.speer.Peer;
-import com.tambapps.p2p.speer.util.IPUtils;
+import com.tambapps.p2p.speer.util.PeerUtils;
 import lombok.SneakyThrows;
 
 import java.net.InetAddress;
@@ -15,7 +15,7 @@ public class LastOctetSeekingStrategy implements SeekingStrategy {
   private int i;
 
   public LastOctetSeekingStrategy(String address, int port) {
-    this(IPUtils.getAddress(address), port);
+    this(PeerUtils.getAddress(address), port);
   }
 
   public LastOctetSeekingStrategy(InetAddress address, int port) {

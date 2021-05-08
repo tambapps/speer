@@ -1,18 +1,14 @@
 package com.tambapps.p2p.speer.util;
 
-import com.tambapps.p2p.speer.Peer;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
-public final class IPUtils {
+public final class PeerUtils {
 
   /**
    * from https://stackoverflow.com/questions/6064510/how-to-get-ip-address-of-the-device-from-code
@@ -44,11 +40,12 @@ public final class IPUtils {
    * Get an available port
    *
    * @param inetAddress the address of the host
+   * @param startingPort the port from which to start looking for
    * @return an available port
    */
-  public static int getAvailablePort(InetAddress inetAddress) {
-    int port = Peer.DEFAULT_PORT;
-    while (port < Peer.DEFAULT_PORT + 16 * 16) {
+  public static int getAvailablePort(InetAddress inetAddress, int startingPort) {
+    int port = startingPort;
+    while (port < startingPort + 16 * 16) {
       try (ServerSocket serverSocket = new ServerSocket(port, 0, inetAddress)) {
       } catch (IOException e) {
         port++;
@@ -68,28 +65,6 @@ public final class IPUtils {
   public static String toString(InetAddress address) {
     return address.getHostAddress().replace("/", "");
   }
-
-  /**
-   * Returns the hex string of the given ip
-   *
-   * @param address the address
-   * @return the hex string of the given ip
-   */
-  public static String toHexString(InetAddress address) {
-    return Arrays.stream(toString(address).split("\\."))
-        .map(IPUtils::toHexString)
-        .collect(Collectors.joining());
-  }
-
-  public static String toHexString(int i) {
-    return toHexString(Integer.toString(i, 16));
-  }
-
-  public static String toHexString(String n) {
-    n = n.toUpperCase();
-    return n.length() > 1 ? n : "0" + n;
-  }
-
 
   public static InetAddress getAddress(String address) {
     try {
