@@ -27,21 +27,6 @@ public class PeerGreeter {
   private final PeerGreetings greetings;
   private final AtomicBoolean interrupt = new AtomicBoolean();
 
-  public void greetOne(ServerPeer serverPeer) throws IOException {
-    try (PeerConnection socket = serverPeer.accept()) {
-      greetings.write(greetingPeers, socket.getOutputStream());
-    }
-  }
-
-  // server socket needs to be provided because the only way to interrupt serverSocket.accept()
-  // is by calling serverSocket.close() from another thread
-  public void greetOne(ServerSocket serverSocket) throws IOException {
-    try (Socket socket = serverSocket.accept();
-        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
-      greetings.write(greetingPeers, outputStream);
-    }
-  }
-
   // catch SocketException if you want to handle case when serverSocket is closed
   public void greet(ServerPeer serverPeer) throws IOException {
     interrupt.set(false);
@@ -57,8 +42,19 @@ public class PeerGreeter {
     }
   }
 
-  public void stop() {
-    interrupt.set(true);
+  public void greetOne(ServerPeer serverPeer) throws IOException {
+    try (PeerConnection socket = serverPeer.accept()) {
+      greetings.write(greetingPeers, socket.getOutputStream());
+    }
+  }
+
+  // server socket needs to be provided because the only way to interrupt serverSocket.accept()
+  // is by calling serverSocket.close() from another thread
+  public void greetOne(ServerSocket serverSocket) throws IOException {
+    try (Socket socket = serverSocket.accept();
+        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
+      greetings.write(greetingPeers, outputStream);
+    }
   }
 
   public void greet(PeerConnection connection) throws IOException {
@@ -67,6 +63,10 @@ public class PeerGreeter {
 
   public void checkGreet(ServerSocketChannel serverSocketChannel) throws IOException {
     checkGreet(greetings, greetingPeers, serverSocketChannel);
+  }
+
+  public void stop() {
+    interrupt.set(true);
   }
 
   /**
