@@ -57,6 +57,10 @@ public class ServerPeer implements Closeable {
     return serverSocket;
   }
 
+  public int getPort() {
+    return serverSocket.getLocalPort();
+  }
+
   @Override
   public void close() throws IOException {
     serverSocket.close();
