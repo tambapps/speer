@@ -6,8 +6,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.List;
 
-public interface PeerSeeking {
+public interface PeerSeeking<T extends Peer> {
 
-  List<Peer> read(DataInputStream inputStream) throws IOException;
+  List<T> read(DataInputStream inputStream) throws IOException;
 
 }

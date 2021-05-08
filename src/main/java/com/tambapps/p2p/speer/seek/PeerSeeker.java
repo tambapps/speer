@@ -20,15 +20,15 @@ import java.util.concurrent.Future;
 
 @Slf4j
 @AllArgsConstructor
-public class PeerSeeker {
+public class PeerSeeker<T extends Peer> {
 
-  public interface SeekListener {
+  public interface SeekListener<T extends Peer> {
     /**
      * Callback invoked when peers has been seeked.
      *
      * @param peers the seeked peers
      */
-    void onPeersFound(List<Peer> peers);
+    void onPeersFound(List<T> peers);
 
     /**
      * Callback invoked when an unusual error occured when trying to connect to a peer
@@ -40,19 +40,19 @@ public class PeerSeeker {
   }
 
 
-  private final PeerSeeking seeking;
-  private final SeekListener listener;
+  private final PeerSeeking<T> seeking;
+  private final SeekListener<T> listener;
   // peers not to sniff
   @Getter
   private final List<Peer> filteredPeers = new ArrayList<>();
 
-  public PeerSeeker(PeerSeeking seeking) {
+  public PeerSeeker(PeerSeeking<T> seeking) {
     this(seeking, null);
   }
 
-  public Optional<Peer> seekFirst(SeekingStrategy seekingStrategy, int howManyTimes) {
+  public Optional<T> seekFirst(SeekingStrategy seekingStrategy, int howManyTimes) {
     for (int i = 0; i < howManyTimes; i++) {
-      Optional<Peer> peer = seekFirst(seekingStrategy);
+      Optional<T> peer = seekFirst(seekingStrategy);
       if (peer.isPresent()) {
         return peer;
       }
@@ -60,10 +60,10 @@ public class PeerSeeker {
     return Optional.empty();
   }
 
-  public Optional<Peer> seekFirst(SeekingStrategy seekingStrategy) {
+  public Optional<T> seekFirst(SeekingStrategy seekingStrategy) {
     seekingStrategy.reset();
     for (Peer peer : seekingStrategy) {
-      List<Peer> seekedPeers = seek(peer);
+      List<T> seekedPeers = seek(peer);
       if (!seekedPeers.isEmpty()) {
         return Optional.of(seekedPeers.get(0));
       }
@@ -71,39 +71,39 @@ public class PeerSeeker {
     return Optional.empty();
   }
 
-  public Set<Peer> seek(SeekingStrategy seekingStrategy, int howManyTimes) {
-    Set<Peer> seekedPeers = new HashSet<>();
+  public Set<T> seek(SeekingStrategy seekingStrategy, int howManyTimes) {
+    Set<T> seekedPeers = new HashSet<>();
     for (int i = 0; i < howManyTimes; i++) {
       seekedPeers.addAll(seek(seekingStrategy));
     }
     return seekedPeers;
   }
 
-  public Set<Peer> seek(SeekingStrategy seekingStrategy) {
+  public Set<T> seek(SeekingStrategy seekingStrategy) {
     seekingStrategy.reset();
-    Set<Peer> seekedPeers = new HashSet<>();
+    Set<T> seekedPeers = new HashSet<>();
     for (Peer peer : seekingStrategy) {
       seekedPeers.addAll(seek(peer));
     }
     return seekedPeers;
   }
 
-  public List<Future<List<Peer>>> seek(SeekingStrategy seekingStrategy, ExecutorService executor) {
+  public List<Future<List<T>>> seek(SeekingStrategy seekingStrategy, ExecutorService executor) {
     seekingStrategy.reset();
-    List<Future<List<Peer>>> futures = new ArrayList<>();
+    List<Future<List<T>>> futures = new ArrayList<>();
     for (Peer peer : seekingStrategy) {
       futures.add(executor.submit(() -> seek(peer)));
     }
     return futures;
   }
 
-  public List<Peer> seek(Peer sniffPeer) {
+  public List<T> seek(Peer sniffPeer) {
     if (filteredPeers.contains(sniffPeer)) {
       return Collections.emptyList();
     }
     LOGGER.trace("Will seek {}", sniffPeer);
     try (PeerConnection connection = PeerConnection.from(sniffPeer)) {
-      List<Peer> peers = seeking.read(connection.getInputStream());
+      List<T> peers = seeking.read(connection.getInputStream());
       LOGGER.debug("Found peers {}", peers);
       if (listener != null) {
         listener.onPeersFound(peers);

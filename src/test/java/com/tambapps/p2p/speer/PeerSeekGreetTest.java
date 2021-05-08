@@ -36,7 +36,7 @@ public class PeerSeekGreetTest {
   );
   private static final SeekingStrategy STRATEGY =
       new LastOctetSeekingStrategy("127.0.0.0", GREETER_PORT);
-  private static final PeerSeeking SEEKING = inputStream ->
+  private static final PeerSeeking<Peer> SEEKING = inputStream ->
       Arrays.stream(inputStream.readUTF().split("\\n"))
           .map(Peer::parse).collect(Collectors.toList());
 
@@ -70,7 +70,7 @@ public class PeerSeekGreetTest {
 
   @Test
   public void test() {
-    PeerSeeker seeker = new PeerSeeker(SEEKING, new PeerSeeker.SeekListener() {
+    PeerSeeker seeker = new PeerSeeker(SEEKING, new PeerSeeker.SeekListener<Peer>() {
       @Override
       public void onPeersFound(List<Peer> peers) {
         LOGGER.info("Found peers {}", peers);

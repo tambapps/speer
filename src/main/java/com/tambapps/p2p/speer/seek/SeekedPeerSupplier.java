@@ -15,24 +15,24 @@ import java.util.concurrent.LinkedBlockingDeque;
  * Supplier of seeked peer. The seeking process will be asynchronous if an executor service is
  * provided
  */
-public class SeekedPeerSupplier implements PeerSeeker.SeekListener {
+public class SeekedPeerSupplier<T extends Peer> implements PeerSeeker.SeekListener<T> {
 
   private final BlockingQueue<Peer> peersQueue = new LinkedBlockingDeque<>();
   private final SeekingStrategy seekingStrategy;
-  private final PeerSeeker seeker;
+  private final PeerSeeker<T> seeker;
   private final ExecutorService executorService;
 
   public SeekedPeerSupplier(SeekingStrategy seekingStrategy,
-      PeerSeeking seeking) {
+      PeerSeeking<T> seeking) {
     this(null, seekingStrategy, seeking);
   }
 
   public SeekedPeerSupplier(ExecutorService executorService,
       SeekingStrategy seekingStrategy,
-      PeerSeeking seeking) {
+      PeerSeeking<T> seeking) {
     this.executorService = executorService;
     this.seekingStrategy = seekingStrategy;
-    this.seeker = new PeerSeeker(seeking, this);
+    this.seeker = new PeerSeeker<>(seeking, this);
   }
 
   public Peer get() throws InterruptedException {
@@ -47,8 +47,8 @@ public class SeekedPeerSupplier implements PeerSeeker.SeekListener {
   }
 
   private void asyncSeek() throws InterruptedException {
-    List<Future<List<Peer>>> seek = seeker.seek(seekingStrategy, executorService);
-    for (Future<List<Peer>> future : seek) {
+    List<Future<List<T>>> seek = seeker.seek(seekingStrategy, executorService);
+    for (Future<List<T>> future : seek) {
       if (!peersQueue.isEmpty()) {
         return;
       }
@@ -61,7 +61,7 @@ public class SeekedPeerSupplier implements PeerSeeker.SeekListener {
   }
 
   @Override
-  public void onPeersFound(List<Peer> peers) {
+  public void onPeersFound(List<T> peers) {
     peersQueue.addAll(peers);
   }
 
