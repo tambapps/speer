@@ -16,7 +16,7 @@ public abstract class AbstractConnectionTest {
   @SneakyThrows
   public void runTest(DangerousConsumer<PeerConnection> serverConsumer,
       DangerousConsumer<PeerConnection> clientConsumer) {
-    Peer peer = Peer.findAvailablePeer();
+    Peer peer = Peer.of("127.0.0.1", 8081);
     System.out.println("Peer " + peer);
     Peerer server = new Peerer(peer, null);
     executor.submit(() -> {
