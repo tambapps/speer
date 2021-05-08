@@ -18,8 +18,10 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -68,7 +70,17 @@ public class PeerSeekGreetTest {
 
   @Test
   public void test() {
-    PeerSeeker seeker = new PeerSeeker(SEEKING, (peers) -> LOGGER.info("Found peers {}", peers));
+    PeerSeeker seeker = new PeerSeeker(SEEKING, new PeerSeeker.SeekListener() {
+      @Override
+      public void onPeersFound(List<Peer> peers) {
+        LOGGER.info("Found peers {}", peers);
+      }
+
+      @Override
+      public void onException(IOException e) {
+
+      }
+    });
 
     Set<Peer> peers = seeker.seek(STRATEGY);
 
@@ -83,5 +95,18 @@ public class PeerSeekGreetTest {
     Peer peer2 = supplier.get();
 
     assertEquals(Arrays.asList(PEER1, PEER2), Arrays.asList(peer1, peer2));
+  }
+
+  @Test
+  public void testSupplierAsync() throws Exception {
+    ExecutorService seekExecutor = Executors.newFixedThreadPool(4);
+    SeekedPeerSupplier supplier = new SeekedPeerSupplier(seekExecutor, STRATEGY, SEEKING);
+
+    Peer peer1 = supplier.get();
+    Peer peer2 = supplier.get();
+
+    assertEquals(Arrays.asList(PEER1, PEER2), Arrays.asList(peer1, peer2));
+
+    seekExecutor.shutdownNow();
   }
 }
