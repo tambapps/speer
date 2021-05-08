@@ -265,6 +265,10 @@ public class PeerConnection implements Closeable {
     return inputStream.skip(n);
   }
 
+  public <T> T getAttribute(String key) {
+    return (T) attributes.get(key);
+  }
+
   public boolean isClosed() {
     return socket.isClosed();
   }
