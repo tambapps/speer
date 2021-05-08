@@ -17,8 +17,8 @@ import java.net.Socket;
 import java.util.Collections;
 import java.util.Map;
 
-@Getter
 @ToString
+@Getter
 public class PeerConnection implements Closeable {
 
   /**
@@ -121,6 +121,7 @@ public class PeerConnection implements Closeable {
     }
   }
 
+  // TODO remove me. Too specific to fandem
   public void receiveFile(File outputFile) throws IOException {
     receiveFile((name -> outputFile));
   }
@@ -140,6 +141,128 @@ public class PeerConnection implements Closeable {
         nbBytesToRead = remainingBytes < buffer.length ? (int) remainingBytes : buffer.length;
       }
     }
+  }
+
+  // methods from DataOutputStream
+  public void write(byte[] b, int off, int len) throws IOException {
+    outputStream.write(b, off, len);
+  }
+
+  public void flush() throws IOException {
+    outputStream.flush();
+  }
+
+  public void writeBoolean(boolean b) throws IOException {
+    outputStream.writeBoolean(b);
+  }
+
+  public final void writeByte(int v) throws IOException {
+    outputStream.writeByte(v);
+  }
+
+  public final void writeShort(int v) throws IOException {
+    outputStream.writeShort(v);
+  }
+
+  public final void writeChar(int v) throws IOException {
+    outputStream.writeChar(v);
+  }
+
+  public final void writeInt(int v) throws IOException {
+    outputStream.writeInt(v);
+  }
+
+  public final void writeLong(long v) throws IOException {
+    outputStream.writeLong(v);
+  }
+
+  public final void writeFloat(float v) throws IOException {
+    outputStream.writeFloat(v);
+  }
+
+  public final void writeDouble(double v) throws IOException {
+    outputStream.writeDouble(v);
+  }
+
+  public final void writeBytes(String s) throws IOException {
+    outputStream.writeBytes(s);
+  }
+
+  public final void writeChars(String s) throws IOException {
+    outputStream.writeChars(s);
+  }
+
+  public final void writeUTF(String str) throws IOException {
+    outputStream.writeUTF(str);
+  }
+
+  public int nbBytesWritten() {
+    return outputStream.size();
+  }
+
+  public void write(byte[] b) throws IOException {
+    outputStream.write(b);
+  }
+
+  // methods from DataInputStream
+  public final int read(byte[] b) throws IOException {
+    return inputStream.read(b);
+  }
+
+  public final int read(byte[] b, int off, int len) throws IOException {
+    return inputStream.read(b, off, len);
+  }
+
+  public final int skipBytes(int n) throws IOException {
+    return inputStream.skipBytes(n);
+  }
+
+  public final boolean readBoolean() throws IOException {
+    return inputStream.readBoolean();
+  }
+
+  public final byte readByte() throws IOException {
+    return inputStream.readByte();
+  }
+
+  public final int readUnsignedByte() throws IOException {
+    return inputStream.readUnsignedByte();
+  }
+
+  public final short readShort() throws IOException {
+    return inputStream.readShort();
+  }
+
+  public final int readUnsignedShort() throws IOException {
+    return inputStream.readUnsignedShort();
+  }
+
+  public final char readChar() throws IOException {
+    return inputStream.readChar();
+  }
+
+  public final int readInt() throws IOException {
+    return inputStream.readInt();
+  }
+
+  public final long readLong() throws IOException {
+    return inputStream.readLong();
+  }
+
+  public final float readFloat() throws IOException {
+    return inputStream.readFloat();
+  }
+
+  public final double readDouble() throws IOException {
+    return inputStream.readDouble();
+  }
+
+  public final String readUTF() throws IOException {
+    return inputStream.readUTF();
+  }
+
+  public long skip(long n) throws IOException {
+    return inputStream.skip(n);
   }
 
   public boolean isClosed() {
