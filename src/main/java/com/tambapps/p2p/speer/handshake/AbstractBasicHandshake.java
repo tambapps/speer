@@ -17,7 +17,7 @@ public abstract class AbstractBasicHandshake implements Handshake {
   protected static final String ATTRIBUTES_END = "|ATTRIBUTE_END|";
 
   @Override
-  public final Map<String, String> apply(DataOutputStream outputStream,
+  public final Map<String, Object> apply(DataOutputStream outputStream,
       DataInputStream inputStream) throws IOException {
     outputStream.writeUTF(HEADER);
     writeAttributes(outputStream);
@@ -40,11 +40,11 @@ public abstract class AbstractBasicHandshake implements Handshake {
    * @return a map of attributes read from the handshake
    * @throws IOException in case of I/0 errors or handshake fail
    */
-  protected Map<String, String> read(DataInputStream inputStream) throws IOException {
+  protected Map<String, Object> read(DataInputStream inputStream) throws IOException {
     if (!inputStream.readUTF().equals(HEADER)) {
       throw new HandshakeFailException("Remote peer doesn't uses speer");
     }
-    Map<String, String> attributes = new HashMap<>();
+    Map<String, Object> attributes = new HashMap<>();
     String s;
     while (!(s = inputStream.readUTF()).equals(ATTRIBUTES_END)) {
       int separator = s.indexOf(ATTRIBUTE_SEPARATOR);
@@ -57,8 +57,8 @@ public abstract class AbstractBasicHandshake implements Handshake {
     return attributes;
   }
 
-  protected void verifyAttributes(Map<String, String> attributes) throws IOException {
-    String version = attributes.get(VERSION_ATTRIBUTE_KEY);
+  protected void verifyAttributes(Map<String, Object> attributes) throws IOException {
+    String version = String.valueOf(attributes.get(VERSION_ATTRIBUTE_KEY));
     if (version == null) {
       throw new HandshakeFailException("Remote peer didn't provide handshake version");
     }

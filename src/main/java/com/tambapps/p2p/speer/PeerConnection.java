@@ -90,7 +90,7 @@ public class PeerConnection implements Closeable {
   public static PeerConnection from(Socket socket, Handshake handshake) throws IOException {
     DataInputStream dis = new DataInputStream(socket.getInputStream());
     DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-    Map<String, String> attributes = handshake != null ? handshake.apply(dos, dis) :
+    Map<String, Object> attributes = handshake != null ? handshake.apply(dos, dis) :
         Collections.emptyMap();
     return new PeerConnection(socket, dis, dos, attributes);
   }
@@ -98,10 +98,10 @@ public class PeerConnection implements Closeable {
   private final Socket socket;
   private final DataInputStream inputStream;
   private final DataOutputStream outputStream;
-  private final Map<String, String> attributes;
+  private final Map<String, Object> attributes;
 
   private PeerConnection(Socket socket, DataInputStream inputStream, DataOutputStream outputStream,
-      Map<String, String> attributes) {
+      Map<String, Object> attributes) {
     this.socket = socket;
     this.inputStream = inputStream;
     this.outputStream = outputStream;
