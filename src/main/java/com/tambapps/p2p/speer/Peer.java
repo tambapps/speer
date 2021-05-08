@@ -19,6 +19,9 @@ public class Peer {
 
   public static final int DEFAULT_PORT = 8081;
 
+  public static Peer of(InetSocketAddress socketAddress) {
+    return of(socketAddress.getAddress(), socketAddress.getPort());
+  }
   public static Peer of(String address, int port) {
     InetAddress inetAddress;
     try {

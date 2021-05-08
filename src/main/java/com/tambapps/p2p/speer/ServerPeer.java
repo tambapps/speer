@@ -8,27 +8,27 @@ import java.net.ServerSocket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 
-public class PeerServer implements Closeable {
+public class ServerPeer implements Closeable {
 
   private final ServerSocket serverSocket;
   private final Handshake handshake;
 
-  public PeerServer() throws IOException {
+  public ServerPeer() throws IOException {
     this(new ServerSocket());
   }
-  public PeerServer(Peer peer) throws IOException {
+  public ServerPeer(Peer peer) throws IOException {
     this(peer, null);
   }
 
-  public PeerServer(Peer peer, Handshake handshake) throws IOException {
+  public ServerPeer(Peer peer, Handshake handshake) throws IOException {
     this(new ServerSocket(peer.getPort(), 10, peer.getIp()), handshake);
   }
 
-  public PeerServer(ServerSocket serverSocket) {
+  public ServerPeer(ServerSocket serverSocket) {
     this(serverSocket, null);
   }
 
-  public PeerServer(ServerSocket serverSocket, Handshake handshake) {
+  public ServerPeer(ServerSocket serverSocket, Handshake handshake) {
     this.serverSocket = serverSocket;
     this.handshake = handshake;
   }
