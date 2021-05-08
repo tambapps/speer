@@ -2,6 +2,7 @@ package com.tambapps.p2p.speer.greet;
 
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.PeerConnection;
+import com.tambapps.p2p.speer.ServerPeer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -23,6 +25,13 @@ public class PeerGreeter {
   // the peer from which to greet
   private final List<Peer> greetingPeers;
   private final PeerGreetings greetings;
+  private final AtomicBoolean interrupt = new AtomicBoolean();
+
+  public void greetOne(ServerPeer serverPeer) throws IOException {
+    try (PeerConnection socket = serverPeer.accept()) {
+      greetings.write(greetingPeers, socket.getOutputStream());
+    }
+  }
 
   // server socket needs to be provided because the only way to interrupt serverSocket.accept()
   // is by calling serverSocket.close() from another thread
@@ -33,28 +42,27 @@ public class PeerGreeter {
     }
   }
 
-  public void greet(ServerSocket serverSocket, AtomicBoolean interrupt) throws IOException {
+  // catch SocketException if you want to handle case when serverSocket is closed
+  public void greet(ServerPeer serverPeer) throws IOException {
+    interrupt.set(false);
     while (!interrupt.get() && !Thread.interrupted()) {
-      greetOne(serverSocket);
+      greetOne(serverPeer);
     }
   }
 
   public void greet(ServerSocket serverSocket) throws IOException {
-    while (!Thread.interrupted()) {
+    interrupt.set(false);
+    while (!interrupt.get() && !Thread.interrupted()) {
       greetOne(serverSocket);
     }
   }
 
-  public void greet(PeerConnection connection) throws IOException {
-    while (!Thread.interrupted()) {
-      greetings.write(greetingPeers, connection.getOutputStream());
-    }
+  public void stop() {
+    interrupt.set(true);
   }
 
-  public void greet(PeerConnection connection, AtomicBoolean interrupt) throws IOException {
-    while (!interrupt.get() && !Thread.interrupted()) {
-      greetings.write(greetingPeers, connection.getOutputStream());
-    }
+  public void greet(PeerConnection connection) throws IOException {
+    greetings.write(greetingPeers, connection.getOutputStream());
   }
 
   public void checkGreet(ServerSocketChannel serverSocketChannel) throws IOException {
