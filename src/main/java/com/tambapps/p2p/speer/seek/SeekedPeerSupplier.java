@@ -2,8 +2,8 @@ package com.tambapps.p2p.speer.seek;
 
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.seek.strategy.SeekingStrategy;
-import lombok.AllArgsConstructor;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -63,5 +63,10 @@ public class SeekedPeerSupplier implements PeerSeeker.SeekListener {
   @Override
   public void onPeersFound(List<Peer> peers) {
     peersQueue.addAll(peers);
+  }
+
+  @Override
+  public void onException(IOException e) {
+    // do nothing?
   }
 }

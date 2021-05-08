@@ -29,6 +29,14 @@ public class PeerSeeker {
      * @param peers the seeked peers
      */
     void onPeersFound(List<Peer> peers);
+
+    /**
+     * Callback invoked when an unusual error occured when trying to connect to a peer
+     * (ConnectException are filtered)
+     * @param e the exception
+     */
+    void onException(IOException e);
+
   }
 
 
@@ -105,6 +113,9 @@ public class PeerSeeker {
       // connection or handshake failed
       if (!(e instanceof ConnectException)) {
         LOGGER.debug("Couldn't connect to {}", sniffPeer, e);
+        if (listener != null) {
+          listener.onException(e);
+        }
       }
     }
     return Collections.emptyList();
