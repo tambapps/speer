@@ -6,7 +6,7 @@ import com.tambapps.p2p.speer.ServerPeer;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
-public class PeerGreeterService {
+public class PeerGreeterService<T extends Peer> {
 
   public interface ErrorListener {
 
@@ -20,18 +20,18 @@ public class PeerGreeterService {
 
   }
   private final ExecutorService executorService;
-  private final PeerGreeter greeter;
+  private final PeerGreeter<T> greeter;
   private final ErrorListener listener;
 
   private ServerPeer serverPeer;
 
   public PeerGreeterService(ExecutorService executorService,
-      PeerGreeter greeter) {
+      PeerGreeter<T> greeter) {
     this(executorService, greeter, null);
   }
 
   public PeerGreeterService(ExecutorService executorService,
-      PeerGreeter greeter, ErrorListener listener) {
+      PeerGreeter<T> greeter, ErrorListener listener) {
     this.executorService = executorService;
     this.greeter = greeter;
     this.listener = listener;

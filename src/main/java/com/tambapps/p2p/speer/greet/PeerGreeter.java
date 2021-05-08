@@ -19,11 +19,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @AllArgsConstructor
 @Slf4j
-public class PeerGreeter {
+public class PeerGreeter<T extends Peer> {
 
   // the peer from which to greet
-  private final List<Peer> greetingPeers;
-  private final PeerGreetings greetings;
+  private final List<T> greetingPeers;
+  private final PeerGreetings<T> greetings;
   private final AtomicBoolean interrupt = new AtomicBoolean();
 
   // catch SocketException if you want to handle case when serverSocket is closed
@@ -76,7 +76,7 @@ public class PeerGreeter {
    * @param serverSocketChannel the socket from which to check if a seeker has seeked
    * @throws IOException in case of I/O errors
    */
-  public static void checkGreet(PeerGreetings greetings, List<Peer> greetingPeers,
+  public static <T extends Peer> void checkGreet(PeerGreetings<T> greetings, List<T> greetingPeers,
       ServerSocketChannel serverSocketChannel) throws IOException {
     SocketChannel socketChannel = serverSocketChannel.accept(); // non-blocking
     if (socketChannel != null) {

@@ -31,7 +31,7 @@ public class PeerSeekGreetTest {
   private static final Peer PEER2 = Peer.of("127.0.0.2", 8082);
 
   private static final int GREETER_PORT = 8081;
-  private static final PeerGreetings GREETINGS = (peers, outputStream) -> outputStream.writeUTF(
+  private static final PeerGreetings<Peer> GREETINGS = (peers, outputStream) -> outputStream.writeUTF(
       peers.stream().map(Peer::toString).collect(Collectors.joining("\n"))
   );
   private static final SeekingStrategy STRATEGY =
@@ -44,7 +44,7 @@ public class PeerSeekGreetTest {
       Executors.newFixedThreadPool(2)
   );
 
-  private static final PeerGreeter GREETER = new PeerGreeter(Arrays.asList(PEER1, PEER2), GREETINGS);
+  private static final PeerGreeter<Peer> GREETER = new PeerGreeter<>(Arrays.asList(PEER1, PEER2), GREETINGS);
   private static ServerPeer serverPeer;
 
   @BeforeAll
