@@ -2,6 +2,7 @@ package com.tambapps.p2p.speer.greet;
 
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.ServerPeer;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -20,6 +21,7 @@ public class PeerGreeterService<T extends Peer> {
 
   }
   private final ExecutorService executorService;
+  @Getter
   private final PeerGreeter<T> greeter;
   private final ErrorListener listener;
 

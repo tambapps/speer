@@ -4,6 +4,7 @@ import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.PeerConnection;
 import com.tambapps.p2p.speer.ServerPeer;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayOutputStream;
@@ -14,6 +15,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,10 +23,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class PeerGreeter<T extends Peer> {
 
-  // the peer from which to greet
-  private final List<T> greetingPeers;
+  @Getter
+  private final List<T> availablePeers;
   private final PeerGreetings<T> greetings;
   private final AtomicBoolean interrupt = new AtomicBoolean();
+
+  public PeerGreeter(PeerGreetings<T> greetings) {
+    this(new ArrayList<>(), greetings);
+  }
 
   // catch SocketException if you want to handle case when serverSocket is closed
   public void greet(ServerPeer serverPeer) throws IOException {
@@ -43,7 +49,7 @@ public class PeerGreeter<T extends Peer> {
 
   public void greetOne(ServerPeer serverPeer) throws IOException {
     try (PeerConnection socket = serverPeer.accept()) {
-      greetings.write(greetingPeers, socket.getOutputStream());
+      greetings.write(availablePeers, socket.getOutputStream());
     }
   }
 
@@ -52,16 +58,20 @@ public class PeerGreeter<T extends Peer> {
   public void greetOne(ServerSocket serverSocket) throws IOException {
     try (Socket socket = serverSocket.accept();
         DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
-      greetings.write(greetingPeers, outputStream);
+      greetings.write(availablePeers, outputStream);
     }
   }
 
   public void greet(PeerConnection connection) throws IOException {
-    greetings.write(greetingPeers, connection.getOutputStream());
+    greetings.write(availablePeers, connection.getOutputStream());
   }
 
   public void checkGreet(ServerSocketChannel serverSocketChannel) throws IOException {
-    checkGreet(greetings, greetingPeers, serverSocketChannel);
+    checkGreet(greetings, availablePeers, serverSocketChannel);
+  }
+
+  public void addAvailablePeer(T peer) {
+    availablePeers.add(peer);
   }
 
   public void stop() {
