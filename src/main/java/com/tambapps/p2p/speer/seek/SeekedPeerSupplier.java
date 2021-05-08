@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class SeekedPeerSupplier<T extends Peer> implements PeerSeeker.SeekListener<T> {
 
-  private final BlockingQueue<Peer> peersQueue = new LinkedBlockingDeque<>();
+  private final BlockingQueue<T> peersQueue = new LinkedBlockingDeque<>();
   private final SeekingStrategy seekingStrategy;
   private final PeerSeeker<T> seeker;
   private final ExecutorService executorService;
@@ -35,7 +35,7 @@ public class SeekedPeerSupplier<T extends Peer> implements PeerSeeker.SeekListen
     this.seeker = new PeerSeeker<>(seeking, this);
   }
 
-  public Peer get() throws InterruptedException {
+  public T get() throws InterruptedException {
     if (peersQueue.isEmpty()) {
       if (executorService != null) {
         asyncSeek();
