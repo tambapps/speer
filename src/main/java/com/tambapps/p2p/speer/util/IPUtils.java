@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -90,4 +91,11 @@ public final class IPUtils {
   }
 
 
+  public static InetAddress getAddress(String address) {
+    try {
+      return InetAddress.getByName(address);
+    } catch (UnknownHostException e) {
+      throw new IllegalArgumentException("Unknown host", e);
+    }
+  }
 }

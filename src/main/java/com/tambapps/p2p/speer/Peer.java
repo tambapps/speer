@@ -23,13 +23,7 @@ public class Peer {
     return of(socketAddress.getAddress(), socketAddress.getPort());
   }
   public static Peer of(String address, int port) {
-    InetAddress inetAddress;
-    try {
-      inetAddress = InetAddress.getByName(address);
-    } catch (UnknownHostException e) {
-      throw new IllegalArgumentException("Unknown host", e);
-    }
-    return new Peer(inetAddress, port);
+    return new Peer(IPUtils.getAddress(address), port);
   }
 
   public static Peer of(InetAddress address, int port) {
@@ -45,13 +39,7 @@ public class Peer {
     if (index <= 0) {
       throw new IllegalArgumentException(String.format("'%s' is malformed", peer));
     }
-    InetAddress address;
-    try {
-      address = InetAddress.getByName(peer.substring(0, index));
-    } catch (UnknownHostException e) {
-      throw new IllegalArgumentException("Unknown host", e);
-    }
-    return of(address, Integer.parseInt(peer.substring(index + 1)));
+    return of(IPUtils.getAddress(peer.substring(0, index)), Integer.parseInt(peer.substring(index + 1)));
   }
 
   public static Peer fromHexString(String hexString) throws UnknownHostException {
