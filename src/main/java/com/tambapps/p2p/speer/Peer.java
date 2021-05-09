@@ -8,8 +8,10 @@ import lombok.Data;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 
+/**
+ * Representation of a network access point (Ip address + port)
+ */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 public class Peer {
@@ -52,25 +54,25 @@ public class Peer {
     return of(address, PeerUtils.getAvailablePort(address, startLookingPort));
   }
 
-  InetAddress ip;
+  InetAddress address;
   int port;
 
 
   @Override
   public String toString() {
-    return String.format("%s:%d", getIpString(), port);
+    return String.format("%s:%d", getAddressString(), port);
   }
 
-  public String getIpString() {
-    return PeerUtils.toString(ip);
+  public String getAddressString() {
+    return PeerUtils.toString(address);
   }
 
   public InetSocketAddress toSocketAddress() {
-    return new InetSocketAddress(getIp(), getPort());
+    return new InetSocketAddress(getAddress(), getPort());
   }
 
   public int[] ipFields() {
-    String[] fields = getIpString().split("\\.");
+    String[] fields = getAddressString().split("\\.");
     int[] ipFields = new int[4];
     for (int i = 0; i < fields.length; i++) {
       ipFields[i] = Integer.parseInt(fields[i]);

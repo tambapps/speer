@@ -108,7 +108,7 @@ public class PeerSeeker<T extends Peer> {
   }
 
   public List<T> seek(Peer sniffPeer) {
-    if (filteredAddresses.contains(sniffPeer.getIp())) {
+    if (filteredAddresses.contains(sniffPeer.getAddress())) {
       return Collections.emptyList();
     }
     LOGGER.trace("Will seek {}", sniffPeer);

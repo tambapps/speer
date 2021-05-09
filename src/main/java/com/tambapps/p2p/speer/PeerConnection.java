@@ -53,7 +53,7 @@ public class PeerConnection implements Closeable {
    * @throws IOException in case of I/O errors
    */
   public static PeerConnection from(Peer peer) throws IOException {
-    return from(new Socket(peer.getIp(), peer.getPort()));
+    return from(new Socket(peer.getAddress(), peer.getPort()));
   }
 
   /**
@@ -65,7 +65,7 @@ public class PeerConnection implements Closeable {
    * @throws IOException in case of I/O errors
    */
   public static PeerConnection from(Peer peer, Handshake handshake) throws IOException {
-    return from(new Socket(peer.getIp(), peer.getPort()), handshake);
+    return from(new Socket(peer.getAddress(), peer.getPort()), handshake);
   }
 
   /**

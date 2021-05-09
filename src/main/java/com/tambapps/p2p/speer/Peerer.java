@@ -28,13 +28,13 @@ public class Peerer {
     if (peer == null) {
       peer = Peer.findAvailablePeer();
     }
-    try (ServerSocket serverSocket = new ServerSocket(peer.getPort(), 1, peer.getIp())) {
+    try (ServerSocket serverSocket = new ServerSocket(peer.getPort(), 1, peer.getAddress())) {
       return PeerConnection.from(serverSocket.accept(), handshake);
     }
   }
 
   public PeerConnection connect(Peer peer) throws IOException {
-    return PeerConnection.from(new Socket(peer.getIp(), peer.getPort()), handshake);
+    return PeerConnection.from(new Socket(peer.getAddress(), peer.getPort()), handshake);
   }
 
   // TODO add method with peer sniffer

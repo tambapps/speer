@@ -21,7 +21,7 @@ public class ServerPeer implements Closeable {
   }
 
   public ServerPeer(Peer peer, Handshake handshake) throws IOException {
-    this(new ServerSocket(peer.getPort(), 10, peer.getIp()), handshake);
+    this(new ServerSocket(peer.getPort(), 10, peer.getAddress()), handshake);
   }
 
   public ServerPeer(ServerSocket serverSocket) {
