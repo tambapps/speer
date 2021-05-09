@@ -29,14 +29,13 @@ public class AttributeHandshake implements Handshake {
   public Map<String, Object> apply(DataOutputStream outputStream, DataInputStream inputStream)
       throws IOException {
     writeAttributes(properties, outputStream);
-    outputStream.writeUTF(composeAttribute(PROTOCOL_VERSION_KEY, Speer.VERSION));
     Map<String, Object> attributes = readAttributes(inputStream);
     validate(attributes);
     return attributes;
   }
 
   // overridable
-  protected void validate(Map<String, Object> properties) {
+  protected void validate(Map<String, Object> properties) throws HandshakeFailException {
 
   }
 
@@ -98,6 +97,7 @@ public class AttributeHandshake implements Handshake {
 
   public static void writeAttributes(Map<String, Object> attributes, DataOutputStream outputStream) throws IOException {
     outputStream.writeUTF(ATTRIBUTES_START);
+    outputStream.writeUTF(composeAttribute(PROTOCOL_VERSION_KEY, Speer.VERSION));
     for (Map.Entry<String, Object> entry : attributes.entrySet()) {
       outputStream.writeUTF(composeAttribute(entry.getKey(), entry.getValue()));
     }
