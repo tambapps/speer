@@ -2,9 +2,11 @@ package com.tambapps.p2p.speer.seek;
 
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.PeerConnection;
+import com.tambapps.p2p.speer.handshake.Handshake;
 import com.tambapps.p2p.speer.seek.strategy.SeekingStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -41,13 +43,20 @@ public class PeerSeeker<T extends Peer> {
 
 
   private final PeerSeeking<T> seeking;
-  private final SeekListener<T> listener;
+  @Setter
+  private SeekListener<T> listener;
+  private final Handshake handshake;
+
   // peers not to sniff
   @Getter
   private final List<Peer> filteredPeers = new ArrayList<>();
 
   public PeerSeeker(PeerSeeking<T> seeking) {
     this(seeking, null);
+  }
+
+  public PeerSeeker(PeerSeeking<T> seeking, SeekListener<T> listener) {
+    this(seeking, listener, null);
   }
 
   public Optional<T> seekFirst(SeekingStrategy seekingStrategy, int howManyTimes) {
@@ -102,7 +111,7 @@ public class PeerSeeker<T extends Peer> {
       return Collections.emptyList();
     }
     LOGGER.trace("Will seek {}", sniffPeer);
-    try (PeerConnection connection = PeerConnection.from(sniffPeer)) {
+    try (PeerConnection connection = PeerConnection.from(sniffPeer, handshake)) {
       List<T> peers = seeking.read(connection.getInputStream());
       LOGGER.debug("Found peers {}", peers);
       if (listener != null) {

@@ -35,6 +35,14 @@ public class SeekedPeerSupplier<T extends Peer> implements PeerSeeker.SeekListen
     this.seeker = new PeerSeeker<>(seeking, this);
   }
 
+  public SeekedPeerSupplier(ExecutorService executorService,
+      SeekingStrategy seekingStrategy, PeerSeeker<T> seeker) {
+    this.executorService = executorService;
+    this.seekingStrategy = seekingStrategy;
+    this.seeker = seeker;
+    this.seeker.setListener(this);
+  }
+
   public T get() throws InterruptedException {
     if (peersQueue.isEmpty()) {
       if (executorService != null) {

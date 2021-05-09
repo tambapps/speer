@@ -2,6 +2,7 @@ package com.tambapps.p2p.speer.greet;
 
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.ServerPeer;
+import com.tambapps.p2p.speer.handshake.Handshake;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -40,7 +41,11 @@ public class PeerGreeterService<T extends Peer> {
   }
 
   public void start(Peer peer) throws IOException {
-    serverPeer = new ServerPeer(peer);
+    start(peer, null);
+  }
+
+  public void start(Peer peer, Handshake handshake) throws IOException {
+    serverPeer = new ServerPeer(peer, handshake);
     executorService.submit(() -> greet(serverPeer));
   }
 
