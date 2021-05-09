@@ -131,7 +131,7 @@ public class PeerSeeker<T extends Peer> {
     return Collections.emptyList();
   }
 
-  public void addFilteredAddresses(InetAddress address) {
+  public void addFilteredAddress(InetAddress address) {
     filteredAddresses.add(address);
   }
 
