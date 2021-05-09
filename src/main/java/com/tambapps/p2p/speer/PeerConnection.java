@@ -269,6 +269,14 @@ public class PeerConnection implements Closeable {
     return (T) attributes.get(key);
   }
 
+  public Peer getSelfPeer() {
+    return Peer.of(socket.getLocalAddress(), socket.getLocalPort());
+  }
+
+  public Peer getConnectedPeer() {
+    return Peer.of(socket.getInetAddress(), socket.getPort());
+  }
+
   public boolean isClosed() {
     return socket.isClosed();
   }

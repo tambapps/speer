@@ -27,10 +27,6 @@ public class Peer {
     return new Peer(address, port);
   }
 
-  public static Peer of(Socket socket) {
-    return new Peer(socket.getInetAddress(), socket.getPort());
-  }
-
   public static Peer parse(String peer) {
     int index = peer.indexOf(":");
     if (index <= 0) {
@@ -46,6 +42,10 @@ public class Peer {
 
   public static Peer findAvailablePeer(InetAddress address) {
     return findAvailablePeer(address, 50000);
+  }
+
+  public static Peer findAvailablePeer(int startLookingPort) throws IOException {
+    return findAvailablePeer(PeerUtils.getIpAddress(), startLookingPort);
   }
 
   public static Peer findAvailablePeer(InetAddress address, int startLookingPort) {

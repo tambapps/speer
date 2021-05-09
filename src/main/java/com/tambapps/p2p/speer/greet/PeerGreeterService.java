@@ -6,6 +6,7 @@ import com.tambapps.p2p.speer.handshake.Handshake;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class PeerGreeterService<T extends Peer> {
@@ -25,26 +26,34 @@ public class PeerGreeterService<T extends Peer> {
   @Getter
   private final PeerGreeter<T> greeter;
   private final ErrorListener listener;
+  private final Handshake handshake;
 
   private ServerPeer serverPeer;
 
   public PeerGreeterService(ExecutorService executorService,
       PeerGreeter<T> greeter) {
-    this(executorService, greeter, null);
+    this(executorService, greeter, null, null);
+  }
+
+  public PeerGreeterService(ExecutorService executorService,
+      PeerGreeter<T> greeter, Handshake handshake) {
+    this(executorService, greeter, null, handshake);
   }
 
   public PeerGreeterService(ExecutorService executorService,
       PeerGreeter<T> greeter, ErrorListener listener) {
+    this(executorService, greeter, listener, null);
+  }
+
+  public PeerGreeterService(ExecutorService executorService,
+      PeerGreeter<T> greeter, ErrorListener listener, Handshake handshake) {
     this.executorService = executorService;
     this.greeter = greeter;
     this.listener = listener;
+    this.handshake = handshake;
   }
 
   public void start(Peer peer) throws IOException {
-    start(peer, null);
-  }
-
-  public void start(Peer peer, Handshake handshake) throws IOException {
     serverPeer = new ServerPeer(peer, handshake);
     executorService.submit(() -> greet(serverPeer));
   }
@@ -63,6 +72,14 @@ public class PeerGreeterService<T extends Peer> {
     } catch (IOException e) {
       // ignore
     }
+  }
+
+  public void addAvailablePeer(T peer) {
+    greeter.addAvailablePeer(peer);
+  }
+
+  public void setAvailablePeers(List<T> peers) {
+    greeter.setAvailablePeers(peers);
   }
 
   private void greet(ServerPeer serverPeer) {

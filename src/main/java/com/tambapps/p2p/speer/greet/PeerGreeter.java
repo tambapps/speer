@@ -74,6 +74,11 @@ public class PeerGreeter<T extends Peer> {
     availablePeers.add(peer);
   }
 
+  public void setAvailablePeers(List<T> peers) {
+    this.availablePeers.clear();
+    this.availablePeers.addAll(peers);
+  }
+
   public void stop() {
     interrupt.set(true);
   }

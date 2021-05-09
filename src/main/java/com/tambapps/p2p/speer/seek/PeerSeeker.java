@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -49,7 +50,7 @@ public class PeerSeeker<T extends Peer> {
 
   // peers not to sniff
   @Getter
-  private final List<Peer> filteredPeers = new ArrayList<>();
+  private final List<InetAddress> filteredAddresses = new ArrayList<>();
 
   public PeerSeeker(PeerSeeking<T> seeking) {
     this(seeking, null);
@@ -107,7 +108,7 @@ public class PeerSeeker<T extends Peer> {
   }
 
   public List<T> seek(Peer sniffPeer) {
-    if (filteredPeers.contains(sniffPeer)) {
+    if (filteredAddresses.contains(sniffPeer.getIp())) {
       return Collections.emptyList();
     }
     LOGGER.trace("Will seek {}", sniffPeer);
@@ -130,8 +131,8 @@ public class PeerSeeker<T extends Peer> {
     return Collections.emptyList();
   }
 
-  public void addFilteredPeer(Peer peer) {
-    filteredPeers.add(peer);
+  public void addFilteredAddresses(InetAddress address) {
+    filteredAddresses.add(address);
   }
 
 }
