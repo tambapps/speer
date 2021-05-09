@@ -46,9 +46,16 @@ public class SeekedPeerSupplier<T extends Peer> implements PeerSeeker.SeekListen
   public T get() throws InterruptedException {
     if (peersQueue.isEmpty()) {
       if (executorService != null) {
-        asyncSeek();
+        while (peersQueue.isEmpty() && !Thread.interrupted()) {
+          asyncSeek();
+        }
       } else {
-        seeker.seek(seekingStrategy);
+        while (peersQueue.isEmpty() && !Thread.interrupted()) {
+          seeker.seek(seekingStrategy);
+        }
+      }
+      if (Thread.interrupted()) {
+        throw new InterruptedException();
       }
     }
     return peersQueue.take();
