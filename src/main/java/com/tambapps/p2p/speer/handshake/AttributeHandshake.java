@@ -1,6 +1,7 @@
 package com.tambapps.p2p.speer.handshake;
 
 import com.tambapps.p2p.speer.exception.HandshakeFailException;
+import com.tambapps.p2p.speer.Speer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,6 +17,7 @@ public class AttributeHandshake implements Handshake {
   private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("([A-Za-z_]+)\\((\\w+)\\)=(.*)");
   private static final String ATTRIBUTES_START = "ATTRIBUTES_START";
   private static final String ATTRIBUTES_END = "ATTRIBUTES_END";
+  public static final String PROTOCOL_VERSION_KEY = "protocol_version";
 
   private final Map<String, Object> properties;
 
@@ -27,6 +29,7 @@ public class AttributeHandshake implements Handshake {
   public Map<String, Object> apply(DataOutputStream outputStream, DataInputStream inputStream)
       throws IOException {
     writeAttributes(properties, outputStream);
+    outputStream.writeUTF(composeAttribute(PROTOCOL_VERSION_KEY, Speer.VERSION));
     Map<String, Object> attributes = readAttributes(inputStream);
     validate(attributes);
     return attributes;
@@ -57,7 +60,7 @@ public class AttributeHandshake implements Handshake {
     return properties;
   }
 
-  // TODO handle list
+  // TODO handle lists
   static Object parseAttribute(String attributeType, String value) {
     switch (attributeType) {
       case "integer":
