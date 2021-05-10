@@ -89,6 +89,7 @@ public class PeerGreeter<T extends Peer> {
    * @param greetings           the greetings
    * @param greetingPeers       the peers to greet with
    * @param serverSocketChannel the socket from which to check if a seeker has seeked
+   * @param <T>                 a type extending Peer
    * @throws IOException in case of I/O errors
    */
   public static <T extends Peer> void checkGreet(PeerGreetings<T> greetings, List<T> greetingPeers,

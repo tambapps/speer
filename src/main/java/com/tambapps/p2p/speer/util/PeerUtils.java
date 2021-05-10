@@ -14,6 +14,7 @@ public final class PeerUtils {
    * from https://stackoverflow.com/questions/6064510/how-to-get-ip-address-of-the-device-from-code
    *
    * @return return the ip address of the device
+   * @throws IOException in case of I/O errors
    */
   public static InetAddress getIpAddress() throws IOException {
     ArrayList<NetworkInterface> interfaces =
