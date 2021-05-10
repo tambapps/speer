@@ -10,6 +10,12 @@ import java.net.SocketException;
 
 public class ServerPeer implements Closeable {
 
+  public interface ConnectionListener {
+
+    void onConnection(PeerConnection connection) throws IOException;
+
+  }
+
   private final ServerSocket serverSocket;
   private final Handshake handshake;
 
@@ -59,6 +65,13 @@ public class ServerPeer implements Closeable {
 
   public int getPort() {
     return serverSocket.getLocalPort();
+  }
+
+  public void run(ConnectionListener listener) throws IOException {
+    while (!Thread.interrupted()) {
+      PeerConnection connection = accept();
+      listener.onConnection(connection);
+    }
   }
 
   @Override
