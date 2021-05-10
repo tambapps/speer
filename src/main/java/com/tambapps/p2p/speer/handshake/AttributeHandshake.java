@@ -17,7 +17,7 @@ public class AttributeHandshake implements Handshake {
   private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("([A-Za-z_]+)\\((\\w+)\\)=(.*)");
   private static final String ATTRIBUTES_START = "ATTRIBUTES_START";
   private static final String ATTRIBUTES_END = "ATTRIBUTES_END";
-  public static final String PROTOCOL_VERSION_KEY = "protocol_version";
+  public static final String PROTOCOL_VERSION_KEY = "speer_version";
 
   private final Map<String, Object> properties;
 
@@ -26,7 +26,7 @@ public class AttributeHandshake implements Handshake {
   }
 
   @Override
-  public Map<String, Object> apply(DataOutputStream outputStream, DataInputStream inputStream)
+  public Object apply(DataOutputStream outputStream, DataInputStream inputStream)
       throws IOException {
     writeAttributes(properties, outputStream);
     Map<String, Object> attributes = readAttributes(inputStream);

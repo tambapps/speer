@@ -14,8 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
-import java.util.Map;
 
 @ToString
 @Getter
@@ -90,22 +88,20 @@ public class PeerConnection implements Closeable {
   public static PeerConnection from(Socket socket, Handshake handshake) throws IOException {
     DataInputStream dis = new DataInputStream(socket.getInputStream());
     DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-    Map<String, Object> attributes = handshake != null ? handshake.apply(dos, dis) :
-        Collections.emptyMap();
-    return new PeerConnection(socket, dis, dos, attributes);
+    return new PeerConnection(socket, dis, dos, handshake != null ? handshake.apply(dos, dis) : null);
   }
 
   private final Socket socket;
   private final DataInputStream inputStream;
   private final DataOutputStream outputStream;
-  private final Map<String, Object> attributes;
+  private final Object handshakeData;
 
   private PeerConnection(Socket socket, DataInputStream inputStream, DataOutputStream outputStream,
-      Map<String, Object> attributes) {
+      Object handshakeData) {
     this.socket = socket;
     this.inputStream = inputStream;
     this.outputStream = outputStream;
-    this.attributes = attributes;
+    this.handshakeData = handshakeData;
   }
 
   // TODO remove me. Too specific to fandem
@@ -265,15 +261,15 @@ public class PeerConnection implements Closeable {
     return inputStream.skip(n);
   }
 
-  public <T> T getAttribute(String key) {
-    return (T) attributes.get(key);
+  public <T> T getHandshakeData() {
+    return (T) handshakeData;
   }
 
   public Peer getSelfPeer() {
     return Peer.of(socket.getLocalAddress(), socket.getLocalPort());
   }
 
-  public Peer getConnectedPeer() {
+  public Peer getPeer() {
     return Peer.of(socket.getInetAddress(), socket.getPort());
   }
 

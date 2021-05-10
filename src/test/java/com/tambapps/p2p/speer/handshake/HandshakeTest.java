@@ -1,9 +1,11 @@
 package com.tambapps.p2p.speer.handshake;
 
+import static com.tambapps.p2p.speer.handshake.AttributeHandshake.PROTOCOL_VERSION_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.tambapps.p2p.speer.AbstractConnectionTest;
 import com.tambapps.p2p.speer.PeerConnection;
+import com.tambapps.p2p.speer.Speer;
 import com.tambapps.p2p.speer.util.DangerousConsumer;
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +22,12 @@ public class HandshakeTest extends AbstractConnectionTest {
     ATTRIBUTES1.put("a", 1);
     ATTRIBUTES1.put("b", "b");
     ATTRIBUTES1.put("c", 'c');
+    ATTRIBUTES1.put(PROTOCOL_VERSION_KEY, Speer.VERSION);
     ATTRIBUTES2 = new HashMap<>();
     ATTRIBUTES2.put("a", Long.MAX_VALUE);
     ATTRIBUTES2.put("b", true);
     ATTRIBUTES2.put("c", (short) 5);
+    ATTRIBUTES2.put(PROTOCOL_VERSION_KEY, Speer.VERSION);
   }
 
   @Test
@@ -35,7 +39,7 @@ public class HandshakeTest extends AbstractConnectionTest {
   private DangerousConsumer<PeerConnection> doHandshake(Handshake handshake,
       Map<String, Object> expectedAttributes) {
     return peerConnection -> {
-      Map<String, Object> peerAttributes = handshake.apply(peerConnection);
+      Object peerAttributes = handshake.apply(peerConnection);
       assertEquals(expectedAttributes, peerAttributes);
     };
   }

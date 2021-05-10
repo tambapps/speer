@@ -70,7 +70,7 @@ public class PeerSeekGreetTest {
 
   @Test
   public void test() {
-    PeerSeeker seeker = new PeerSeeker(SEEKING, new PeerSeeker.SeekListener<Peer>() {
+    PeerSeeker<Peer> seeker = new PeerSeeker<>(SEEKING, new PeerSeeker.SeekListener<Peer>() {
       @Override
       public void onPeersFound(List<Peer> peers) {
         LOGGER.info("Found peers {}", peers);
@@ -89,7 +89,7 @@ public class PeerSeekGreetTest {
 
   @Test
   public void testSupplier() throws Exception {
-    SeekedPeerSupplier supplier = new SeekedPeerSupplier(STRATEGY, SEEKING);
+    SeekedPeerSupplier<Peer> supplier = new SeekedPeerSupplier<>(STRATEGY, SEEKING);
 
     Peer peer1 = supplier.get();
     Peer peer2 = supplier.get();
@@ -100,7 +100,7 @@ public class PeerSeekGreetTest {
   @Test
   public void testSupplierAsync() throws Exception {
     ExecutorService seekExecutor = Executors.newFixedThreadPool(4);
-    SeekedPeerSupplier supplier = new SeekedPeerSupplier(seekExecutor, STRATEGY, SEEKING);
+    SeekedPeerSupplier<Peer> supplier = new SeekedPeerSupplier<>(seekExecutor, STRATEGY, SEEKING);
 
     Peer peer1 = supplier.get();
     Peer peer2 = supplier.get();
