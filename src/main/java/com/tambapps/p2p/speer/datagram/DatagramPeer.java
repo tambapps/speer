@@ -38,6 +38,10 @@ public class DatagramPeer extends AbstractDatagramPeer implements Closeable {
     socket.receive(packet);
   }
 
+  public Peer getSelfPeer() {
+    return Peer.of(socket.getLocalAddress(), socket.getLocalPort());
+  }
+
   @Override
   public void close() {
     socket.close();

@@ -24,6 +24,9 @@ public class MulticastDatagramPeer extends AbstractDatagramPeer implements Close
   public MulticastDatagramPeer(int port) throws IOException {
     this(new MulticastSocket(port));
   }
+  public MulticastDatagramPeer() throws IOException {
+    this(new MulticastSocket());
+  }
 
   public MulticastDatagramPeer(InetAddress address, int port) throws IOException {
     this(new MulticastSocket(new InetSocketAddress(address, port)));
