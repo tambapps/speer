@@ -19,8 +19,7 @@ import java.util.concurrent.Future;
 
 public class MulticastDatagramPeerTest {
 
-  private static final InetAddress ADDRESS1 = PeerUtils.getAddress("127.0.0.1");
-  private static final InetAddress ADDRESS2 = PeerUtils.getAddress("127.0.0.2");
+  private static final InetAddress ADDRESS = PeerUtils.getAddress("127.0.0.2");
   private static final InetAddress MULTICAST_ADDRESS = PeerUtils.getAddress("230.0.0.0");
   private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
   private static MulticastDatagramPeer datagramPeer;
@@ -28,7 +27,7 @@ public class MulticastDatagramPeerTest {
 
   @BeforeAll
   public static void initCommunicator() throws IOException {
-    datagramPeer = new MulticastDatagramPeer(ADDRESS1, 5000);
+    datagramPeer = new MulticastDatagramPeer();
     datagramPeer.getSocket().setBroadcast(true);
   }
 
@@ -54,9 +53,10 @@ public class MulticastDatagramPeerTest {
   }
   @Test
   public void testCommunication() throws IOException {
-    runInBackground(communicator -> communicator.send("Hello World", ADDRESS2, 5000));
-    MulticastDatagramPeer client = new MulticastDatagramPeer(Peer.of(ADDRESS2, 5000));
-    assertEquals("Hello World", client.receiveString(1024));
+    runInBackground(communicator -> communicator.send("Hello World", ADDRESS, 5000));
+    try (MulticastDatagramPeer client = new MulticastDatagramPeer(Peer.of(ADDRESS, 5000))) {
+      assertEquals("Hello World", client.receiveString(1024));
+    }
   }
 
   @Disabled("Can't be tested with only one device (?)")

@@ -19,7 +19,7 @@ import java.util.concurrent.Future;
 
 public class DatagramPeerTest {
 
-  private static final InetAddress ADDRESS2 = PeerUtils.getAddress("127.0.0.2");
+  private static final InetAddress ADDRESS = PeerUtils.getAddress("127.0.0.3");
   private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
   private static DatagramPeer datagramPeer;
   private Future<?> future;
@@ -52,9 +52,10 @@ public class DatagramPeerTest {
   }
   @Test
   public void testCommunication() throws IOException {
-    runInBackground(communicator -> communicator.send("Hello World", ADDRESS2, 5000));
-    DatagramPeer client = new DatagramPeer(Peer.of(ADDRESS2, 5000));
-    assertEquals("Hello World", client.receiveString(1024));
+    runInBackground(communicator -> communicator.send("Hello World", ADDRESS, 5000));
+    try (DatagramPeer client = new DatagramPeer(Peer.of(ADDRESS, 5000))) {
+      assertEquals("Hello World", client.receiveString(1024));
+    }
   }
 
   @AfterAll
