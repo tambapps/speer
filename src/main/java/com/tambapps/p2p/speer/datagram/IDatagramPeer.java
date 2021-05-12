@@ -38,7 +38,7 @@ public interface IDatagramPeer extends Closeable {
   }
 
   default <T> void send(T data, Serializer<T> serializer, InetAddress address, int port) throws IOException {
-    byte[] bytes = serializer.serialize(data);
+    byte[] bytes = serializer.serializeToBytes(data);
     send(bytes, address, port);
   }
 
@@ -115,4 +115,6 @@ public interface IDatagramPeer extends Closeable {
 
   boolean isClosed();
 
+  @Override
+  void close();
 }

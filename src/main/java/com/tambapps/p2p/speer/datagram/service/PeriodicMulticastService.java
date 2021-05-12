@@ -1,4 +1,4 @@
-package com.tambapps.p2p.speer.datagram.discovery;
+package com.tambapps.p2p.speer.datagram.service;
 
 import com.tambapps.p2p.speer.datagram.MulticastDatagramPeer;
 import com.tambapps.p2p.speer.util.Serializer;
@@ -29,14 +29,14 @@ public class PeriodicMulticastService<T> {
 
   public PeriodicMulticastService(ScheduledExecutorService executorService,
       InetAddress multicastAddress,
-      int port, Serializer<T> deserializer) {
+      int port, Serializer<T> serializer) {
     if (!multicastAddress.isMulticastAddress()) {
       throw new IllegalArgumentException("Address should be multicast");
     }
     this.executorService = executorService;
     this.multicastAddress = multicastAddress;
     this.port = port;
-    this.serializer = deserializer;
+    this.serializer = serializer;
   }
 
   public void start(int bufferSize, long delayMillis) throws IOException {

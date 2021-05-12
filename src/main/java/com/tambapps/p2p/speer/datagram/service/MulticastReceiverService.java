@@ -1,4 +1,4 @@
-package com.tambapps.p2p.speer.datagram.discovery;
+package com.tambapps.p2p.speer.datagram.service;
 
 import com.tambapps.p2p.speer.datagram.MulticastDatagramPeer;
 import com.tambapps.p2p.speer.util.Deserializer;
