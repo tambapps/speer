@@ -56,8 +56,18 @@ public class PeriodicMulticastService<T> {
   }
 
   public void stop() {
+    stop(false);
+  }
+
+  public void stop(boolean shutdownExecutor) {
+    if (datagramPeer.isClosed()) {
+      return;
+    }
     datagramPeer.close();
     future.cancel(true);
+    if (shutdownExecutor) {
+      executorService.shutdown();
+    }
   }
 
   private void multicast(MulticastDatagramPeer datagramPeer) {
