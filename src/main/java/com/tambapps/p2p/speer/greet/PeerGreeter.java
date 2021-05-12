@@ -5,7 +5,6 @@ import com.tambapps.p2p.speer.PeerConnection;
 import com.tambapps.p2p.speer.ServerPeer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @AllArgsConstructor
-@Slf4j
 public class PeerGreeter<T extends Peer> {
 
   @Getter

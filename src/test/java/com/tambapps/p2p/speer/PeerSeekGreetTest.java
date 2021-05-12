@@ -9,7 +9,6 @@ import com.tambapps.p2p.speer.seek.PeerSeeking;
 import com.tambapps.p2p.speer.seek.SeekedPeerSupplier;
 import com.tambapps.p2p.speer.seek.strategy.LastOctetSeekingStrategy;
 import com.tambapps.p2p.speer.seek.strategy.SeekingStrategy;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class PeerSeekGreetTest {
   private static final Peer PEER1 = Peer.of("127.0.0.2", 8081);
   private static final Peer PEER2 = Peer.of("127.0.0.2", 8082);
@@ -53,10 +51,9 @@ public class PeerSeekGreetTest {
     serverPeer = new ServerPeer(peer);
     executor.submit(() -> {
       try {
-        LOGGER.info("Starting greeting at {}", peer);
         GREETER.greet(serverPeer);
       } catch (SocketException e) {
-        LOGGER.info("Server socket was closed, stopped greeting.", e);
+        // Server socket was closed, stopped greeting.
       }
       return null;
     });
@@ -73,7 +70,7 @@ public class PeerSeekGreetTest {
     PeerSeeker<Peer> seeker = new PeerSeeker<>(SEEKING, new PeerSeeker.SeekListener<Peer>() {
       @Override
       public void onPeersFound(List<Peer> peers) {
-        LOGGER.info("Found peers {}", peers);
+        System.out.println("Found peers " + peers);
       }
 
       @Override

@@ -7,7 +7,6 @@ import com.tambapps.p2p.speer.seek.strategy.SeekingStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -21,7 +20,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-@Slf4j
 @AllArgsConstructor
 public class PeerSeeker<T extends Peer> {
 
@@ -111,10 +109,8 @@ public class PeerSeeker<T extends Peer> {
     if (filteredAddresses.contains(sniffPeer.getAddress())) {
       return Collections.emptyList();
     }
-    LOGGER.trace("Will seek {}", sniffPeer);
     try (PeerConnection connection = PeerConnection.from(sniffPeer, handshake)) {
       List<T> peers = seeking.read(connection.getInputStream());
-      LOGGER.debug("Found peers {}", peers);
       if (listener != null) {
         listener.onPeersFound(peers);
       }
@@ -122,7 +118,6 @@ public class PeerSeeker<T extends Peer> {
     } catch (IOException e) {
       // connection or handshake failed
       if (!(e instanceof ConnectException)) {
-        LOGGER.debug("Couldn't connect to {}", sniffPeer, e);
         if (listener != null) {
           listener.onException(e);
         }
