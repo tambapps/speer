@@ -19,7 +19,6 @@ import java.util.concurrent.Future;
 
 public class DatagramPeerTest {
 
-  private static final InetAddress ADDRESS1 = PeerUtils.getAddress("127.0.0.1");
   private static final InetAddress ADDRESS2 = PeerUtils.getAddress("127.0.0.2");
   private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
   private static DatagramPeer datagramPeer;
@@ -27,7 +26,7 @@ public class DatagramPeerTest {
 
   @BeforeAll
   public static void initCommunicator() throws SocketException {
-    datagramPeer = new DatagramPeer(ADDRESS1, 5000);
+    datagramPeer = new DatagramPeer();
     datagramPeer.getSocket().setBroadcast(true);
   }
 

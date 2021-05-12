@@ -33,6 +33,11 @@ public class DatagramPeer implements IDatagramPeer {
     this(new DatagramSocket(port));
   }
 
+  // constructor for sender when not caring about from which address:port sending
+  public DatagramPeer() throws SocketException {
+    this(new DatagramSocket());
+  }
+
   public DatagramPeer(DatagramSocket socket) {
     this.socket = socket;
     this.defaultBufferSize = 1024;
@@ -50,6 +55,11 @@ public class DatagramPeer implements IDatagramPeer {
 
   public Peer getSelfPeer() {
     return Peer.of(socket.getLocalAddress(), socket.getLocalPort());
+  }
+
+  @Override
+  public boolean isClosed() {
+    return socket.isClosed();
   }
 
   @Override

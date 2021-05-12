@@ -112,4 +112,7 @@ public interface IDatagramPeer extends Closeable {
 
   int getDefaultBufferSize();
   void setDefaultBufferSize(int bufferSize);
+
+  boolean isClosed();
+
 }

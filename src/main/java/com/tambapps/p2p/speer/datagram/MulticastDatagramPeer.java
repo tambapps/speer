@@ -24,6 +24,7 @@ public class MulticastDatagramPeer implements IDatagramPeer {
     this(new MulticastSocket(peer.toSocketAddress()));
   }
 
+  // constructor for when joining group
   public MulticastDatagramPeer(int port) throws IOException {
     this(new MulticastSocket(port));
   }
@@ -54,6 +55,15 @@ public class MulticastDatagramPeer implements IDatagramPeer {
 
   public void leaveGroup(InetAddress multicastAddress) throws IOException {
     socket.leaveGroup(multicastAddress);
+  }
+
+  public Peer getSelfPeer() {
+    return Peer.of(socket.getLocalAddress(), socket.getLocalPort());
+  }
+
+  @Override
+  public boolean isClosed() {
+    return socket.isClosed();
   }
 
   @Override
