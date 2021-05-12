@@ -3,8 +3,6 @@ package com.tambapps.p2p.speer.datagram;
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.util.Deserializer;
 import com.tambapps.p2p.speer.util.Serializer;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -14,57 +12,53 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
-public abstract class AbstractDatagramPeer implements Closeable {
+public interface IDatagramPeer extends Closeable {
 
-  @Getter
-  @Setter
-  private int bufferSize = 1024;
+  void send(DatagramPacket packet) throws IOException;
+  void receive(DatagramPacket packet) throws IOException;
 
-  public abstract void send(DatagramPacket packet) throws IOException;
-  public abstract void receive(DatagramPacket packet) throws IOException;
-
-  public void send(String string, Peer peer) throws IOException {
+  default void send(String string, Peer peer) throws IOException {
     send(string.getBytes(StandardCharsets.UTF_8), peer);
   }
 
-  public void send(byte[] bytes, Peer peer) throws IOException {
+  default void send(byte[] bytes, Peer peer) throws IOException {
     send(new DatagramPacket(bytes, bytes.length, peer.getAddress(), peer.getPort()));
   }
 
-  public void send(String string, InetAddress address, int port) throws IOException {
+  default void send(String string, InetAddress address, int port) throws IOException {
     send(string.getBytes(StandardCharsets.UTF_8), address, port);
   }
 
-  public void send(byte[] bytes, InetAddress address, int port) throws IOException {
+  default void send(byte[] bytes, InetAddress address, int port) throws IOException {
     send(new DatagramPacket(bytes, bytes.length, address, port));
   }
 
-  public <T> void send(T data, Serializer<T> serializer, Peer peer) throws IOException {
+  default <T> void send(T data, Serializer<T> serializer, Peer peer) throws IOException {
     send(data, serializer, peer.getAddress(), peer.getPort());
   }
 
-  public <T> void send(T data, Serializer<T> serializer, InetAddress address, int port) throws IOException {
+  default <T> void send(T data, Serializer<T> serializer, InetAddress address, int port) throws IOException {
     byte[] bytes = serializer.serialize(data);
     send(bytes, address, port);
   }
 
-  public <T> T receiveObject(Deserializer<T> deserializer, int bufferSize) throws IOException {
+  default <T> T receiveObject(Deserializer<T> deserializer, int bufferSize) throws IOException {
     return deserializer.deserialize(new ByteArrayInputStream(receiveBytes(bufferSize)));
   }
 
-  public <T> T receiveObject(Deserializer<T> deserializer) throws IOException {
+  default <T> T receiveObject(Deserializer<T> deserializer) throws IOException {
     return deserializer.deserialize(new ByteArrayInputStream(receiveBytes()));
   }
 
-  public byte[] receiveBytes() throws IOException {
-    return receiveBytes(bufferSize);
+  default byte[] receiveBytes() throws IOException {
+    return receiveBytes(getDefaultBufferSize());
   }
 
-  public byte[] receiveBytes(int bufferSize) throws IOException {
+  default byte[] receiveBytes(int bufferSize) throws IOException {
     return receiveBytes(new DatagramPacket(new byte[bufferSize], bufferSize));
   }
 
-  public byte[] receiveBytes(DatagramPacket packet) throws IOException {
+  default byte[] receiveBytes(DatagramPacket packet) throws IOException {
     receive(packet);
     if (packet.getData().length == packet.getLength()) {
       return packet.getData();
@@ -75,29 +69,29 @@ public abstract class AbstractDatagramPeer implements Closeable {
     }
   }
 
-  public InputStream receiveStream() throws IOException {
-    return receiveStream(bufferSize);
+  default InputStream receiveStream() throws IOException {
+    return receiveStream(getDefaultBufferSize());
   }
 
-  public InputStream receiveStream(int bufferSize) throws IOException {
+  default InputStream receiveStream(int bufferSize) throws IOException {
     return receiveStream(new DatagramPacket(new byte[bufferSize], bufferSize));
   }
 
-  public InputStream receiveStream(DatagramPacket packet) throws IOException {
+  default InputStream receiveStream(DatagramPacket packet) throws IOException {
     receive(packet);
     return packet.getData().length == packet.getLength() ? new ByteArrayInputStream(packet.getData()) :
         new ByteArrayInputStream(packet.getData(), 0, packet.getLength());
   }
 
-  public String receiveString() throws IOException {
-    return receiveString(bufferSize);
+  default String receiveString() throws IOException {
+    return receiveString(getDefaultBufferSize());
   }
 
-  public String receiveString(int bufferSize) throws IOException {
+  default String receiveString(int bufferSize) throws IOException {
     return receiveString(new DatagramPacket(new byte[bufferSize], bufferSize));
   }
 
-  public String receiveString(DatagramPacket packet) throws IOException {
+  default String receiveString(DatagramPacket packet) throws IOException {
     receive(packet);
     if (packet.getData().length == packet.getLength()) {
       return new String(packet.getData());
@@ -106,13 +100,16 @@ public abstract class AbstractDatagramPeer implements Closeable {
     }
   }
 
-  public DatagramPacket receive() throws IOException {
-    return receive(bufferSize);
+  default DatagramPacket receive() throws IOException {
+    return receive(getDefaultBufferSize());
   }
-  public DatagramPacket receive(int bufferSize) throws IOException {
+
+  default DatagramPacket receive(int bufferSize) throws IOException {
     DatagramPacket packet = new DatagramPacket(new byte[bufferSize], bufferSize);
     receive(packet);
     return packet;
   }
 
+  int getDefaultBufferSize();
+  void setDefaultBufferSize(int bufferSize);
 }

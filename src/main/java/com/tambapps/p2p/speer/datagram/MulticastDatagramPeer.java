@@ -3,8 +3,8 @@ package com.tambapps.p2p.speer.datagram;
 import com.tambapps.p2p.speer.Peer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -12,8 +12,11 @@ import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 
 @AllArgsConstructor
-public class MulticastDatagramPeer extends AbstractDatagramPeer implements Closeable {
+public class MulticastDatagramPeer implements IDatagramPeer {
 
+  @Getter
+  @Setter
+  private int defaultBufferSize;
   @Getter
   private final MulticastSocket socket;
 
@@ -30,6 +33,11 @@ public class MulticastDatagramPeer extends AbstractDatagramPeer implements Close
 
   public MulticastDatagramPeer(InetAddress address, int port) throws IOException {
     this(new MulticastSocket(new InetSocketAddress(address, port)));
+  }
+
+  public MulticastDatagramPeer(MulticastSocket socket) {
+    this.socket = socket;
+    this.defaultBufferSize = 1024;
   }
 
   public void send(DatagramPacket packet) throws IOException {
