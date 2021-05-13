@@ -29,7 +29,7 @@ public class PeriodicMulticastService<T> {
 
   public PeriodicMulticastService(ScheduledExecutorService executorService,
       InetAddress multicastAddress,
-      int port, Serializer<T> serializer) {
+      int port, Serializer<T> serializer, T data) {
     if (!multicastAddress.isMulticastAddress()) {
       throw new IllegalArgumentException("Address should be multicast");
     }
@@ -37,6 +37,7 @@ public class PeriodicMulticastService<T> {
     this.multicastAddress = multicastAddress;
     this.port = port;
     this.serializer = serializer;
+    this.data = data;
   }
 
   public void start(int bufferSize, long delayMillis) throws IOException {
@@ -47,6 +48,10 @@ public class PeriodicMulticastService<T> {
 
   public void start(long delayMillis) throws IOException {
     start(new MulticastDatagramPeer(port), delayMillis);
+  }
+
+  public boolean isRunning() {
+    return future != null;
   }
 
   public void start(MulticastDatagramPeer datagramPeer, long delayMillis) throws IOException {
@@ -64,7 +69,10 @@ public class PeriodicMulticastService<T> {
       return;
     }
     datagramPeer.close();
-    future.cancel(true);
+    if (future != null) {
+      future.cancel(true);
+      future = null;
+    }
     if (shutdownExecutor) {
       executorService.shutdown();
     }
@@ -75,6 +83,7 @@ public class PeriodicMulticastService<T> {
       datagramPeer.send(data, serializer, multicastAddress, port);
     } catch (IOException e) {
       // don't know what to do with it
+      future = null;
     }
   }
 }
