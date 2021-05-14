@@ -260,7 +260,7 @@ public class PeerConnection implements Closeable {
     return Peer.of(socket.getLocalAddress(), socket.getLocalPort());
   }
 
-  public Peer getPeer() {
+  public Peer getRemotePeer() {
     return Peer.of(socket.getInetAddress(), socket.getPort());
   }
 
