@@ -1,8 +1,8 @@
 package com.tambapps.p2p.speer.datagram;
 
 import com.tambapps.p2p.speer.Peer;
-import com.tambapps.p2p.speer.util.Deserializer;
-import com.tambapps.p2p.speer.util.Serializer;
+import com.tambapps.p2p.speer.io.Deserializer;
+import com.tambapps.p2p.speer.io.Serializer;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;

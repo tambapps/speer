@@ -1,7 +1,7 @@
 package com.tambapps.p2p.speer.datagram;
 
 import com.tambapps.p2p.speer.Peer;
-import com.tambapps.p2p.speer.util.Deserializer;
+import com.tambapps.p2p.speer.io.Deserializer;
 import lombok.AllArgsConstructor;
 
 import java.io.Closeable;

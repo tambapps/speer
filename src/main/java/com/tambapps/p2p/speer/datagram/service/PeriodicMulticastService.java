@@ -1,7 +1,7 @@
 package com.tambapps.p2p.speer.datagram.service;
 
 import com.tambapps.p2p.speer.datagram.MulticastDatagramPeer;
-import com.tambapps.p2p.speer.util.Serializer;
+import com.tambapps.p2p.speer.io.Serializer;
 import lombok.Getter;
 import lombok.Setter;
 

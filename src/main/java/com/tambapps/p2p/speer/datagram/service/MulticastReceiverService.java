@@ -1,7 +1,7 @@
 package com.tambapps.p2p.speer.datagram.service;
 
 import com.tambapps.p2p.speer.datagram.MulticastDatagramPeer;
-import com.tambapps.p2p.speer.util.Deserializer;
+import com.tambapps.p2p.speer.io.Deserializer;
 
 import java.io.IOException;
 import java.net.InetAddress;
