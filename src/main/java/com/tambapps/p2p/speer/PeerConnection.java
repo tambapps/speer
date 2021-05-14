@@ -3,18 +3,15 @@ package com.tambapps.p2p.speer;
 import com.tambapps.p2p.speer.exception.HandshakeFailException;
 import com.tambapps.p2p.speer.handshake.Handshake;
 import com.tambapps.p2p.speer.io.BoundedInputStream;
-import com.tambapps.p2p.speer.util.FileProvider;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -174,6 +171,18 @@ public class PeerConnection implements Closeable {
 
   public void write(byte[] b) throws IOException {
     outputStream.write(b);
+  }
+
+  public void writeInputStream(InputStream inputStream) throws IOException {
+    writeInputStream(inputStream, 8192);
+  }
+
+  public void writeInputStream(InputStream inputStream, int bufferSize) throws IOException {
+    byte[] buffer = new byte[bufferSize];
+    int count;
+    while ((count = inputStream.read(buffer)) > 0) {
+      outputStream.write(buffer, 0, count);
+    }
   }
 
   // methods from DataInputStream
