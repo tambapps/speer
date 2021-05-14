@@ -12,9 +12,9 @@ import java.io.IOException;
 @AllArgsConstructor
 public class SerializedHandshake<T1, T2> implements Handshake {
 
-  private final T1 data;
   protected final Serializer<T1> serializer;
   protected final Deserializer<T2> deserializer;
+  protected final T1 data;
 
   @Override
   public Object apply(DataOutputStream outputStream, DataInputStream inputStream)

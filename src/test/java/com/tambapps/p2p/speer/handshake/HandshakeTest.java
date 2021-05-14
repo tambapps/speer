@@ -30,8 +30,8 @@ public class HandshakeTest extends AbstractConnectionTest {
 
   @Test
   public void testBasicHandShake() {
-    runTest(doHandshake(new SerializedHandshake<>(ATTRIBUTES1, SERIALIZE_HANDLER, SERIALIZE_HANDLER), ATTRIBUTES2),
-        doHandshake(new SerializedHandshake<>(ATTRIBUTES2, SERIALIZE_HANDLER, SERIALIZE_HANDLER), ATTRIBUTES1));
+    runTest(doHandshake(new SerializedHandshake<>(SERIALIZE_HANDLER, SERIALIZE_HANDLER, ATTRIBUTES1), ATTRIBUTES2),
+        doHandshake(new SerializedHandshake<>(SERIALIZE_HANDLER, SERIALIZE_HANDLER, ATTRIBUTES2), ATTRIBUTES1));
   }
 
   private DangerousConsumer<PeerConnection> doHandshake(Handshake handshake,
