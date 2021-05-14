@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Service used to multicast data periodically
- * @param <T>
+ * @param <T> the type of data to send
  */
 public class PeriodicMulticastService<T> {
 

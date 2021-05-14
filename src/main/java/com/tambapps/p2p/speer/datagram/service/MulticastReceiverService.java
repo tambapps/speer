@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 
 /**
  * Service used to be listen when mulitcasted data
- * @param <T>
+ * @param <T> the type of data to receive
  */
 public class MulticastReceiverService<T> {
 
