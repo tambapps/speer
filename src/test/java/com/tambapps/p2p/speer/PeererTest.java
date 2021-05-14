@@ -1,15 +1,11 @@
 package com.tambapps.p2p.speer;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.io.InputStream;
 
 public class PeererTest extends AbstractConnectionTest {
 
@@ -22,33 +18,23 @@ public class PeererTest extends AbstractConnectionTest {
   }
 
   @Test
-  public void testFileTransfer() throws Exception {
-    File temp = Files.createTempFile("temp", ".txt").toFile();
-    temp.deleteOnExit();
-
-    File file = new File(URLDecoder.decode(
-        PeererTest.class.getResource("/file.txt").getFile(), StandardCharsets.UTF_8.name()));
-    runTest(connection -> connection.sendFile(file),
-        connection -> connection.receiveFile(temp));
-
-    PeererTest.class.getResource("/file.txt").openStream();
-    assertTrue(contentEquals(temp, file));
+  public void testConnectReadStream() {
+    final byte[] bytes = new byte[] {1, 2, 3, 4};
+    runTest(connection -> {
+      connection.write(bytes);
+      connection.writeUTF("youhou");
+        },
+        connection -> {
+      byte[] actualBytes = new byte[bytes.length];
+      InputStream inputStream = connection.inputStream(bytes.length);
+      assertEquals(bytes.length, inputStream.read(actualBytes));
+      // stream should be finished
+      assertEquals(-1, inputStream.read());
+      assertArrayEquals(bytes, actualBytes);
+      // closing this stream should not affect socket's input stream
+      inputStream.close();
+      assertEquals("youhou", connection.readUTF());
+    });
   }
 
-  private boolean contentEquals(File f1, File f2) throws IOException {
-    FileInputStream is1 = new FileInputStream(f1);
-    FileInputStream is2 = new FileInputStream(f2);
-    assertTrue(f1.length() > 0);
-    assertTrue(f2.length() > 0);
-    int EOF = -1;
-    int i1 = is1.read();
-    while (i1 != EOF) {
-      int i2 = is2.read();
-      if (i2 != i1) {
-        return false;
-      }
-      i1 = is1.read();
-    }
-    return is2.read() == EOF;
-  }
 }

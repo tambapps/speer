@@ -1,6 +1,7 @@
 package com.tambapps.p2p.speer;
 
 import com.tambapps.p2p.speer.handshake.Handshake;
+import com.tambapps.p2p.speer.io.BoundedInputStream;
 import com.tambapps.p2p.speer.util.FileProvider;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -102,41 +104,6 @@ public class PeerConnection implements Closeable {
     this.inputStream = inputStream;
     this.outputStream = outputStream;
     this.handshakeData = handshakeData;
-  }
-
-  // TODO remove me. Too specific to fandem
-  public void sendFile(File file) throws IOException {
-    outputStream.writeLong(file.length());
-    outputStream.writeUTF(file.getName());
-    try (FileInputStream is = new FileInputStream(file)) {
-      byte[] buffer = new byte[1024];
-      int len;
-      while ((len = is.read(buffer)) != -1) {
-        outputStream.write(buffer, 0, len);
-      }
-    }
-  }
-
-  // TODO remove me. Too specific to fandem
-  public void receiveFile(File outputFile) throws IOException {
-    receiveFile((name -> outputFile));
-  }
-
-  // TODO remove me. Too specific to fandem
-  public void receiveFile(FileProvider fileProvider) throws IOException {
-    long fileSize = inputStream.readLong();
-    String fileName = inputStream.readUTF();
-    try (FileOutputStream os = new FileOutputStream(fileProvider.newFile(fileName))) {
-      byte[] buffer = new byte[1024];
-      int nbBytesToRead = fileSize < buffer.length ? (int) fileSize : buffer.length;
-      long bytesRead = 0L;
-      while (bytesRead < fileSize) {
-        bytesRead += inputStream.read(buffer, 0, nbBytesToRead);
-        os.write(buffer, 0, nbBytesToRead);
-        long remainingBytes = fileSize - bytesRead;
-        nbBytesToRead = remainingBytes < buffer.length ? (int) remainingBytes : buffer.length;
-      }
-    }
   }
 
   // methods from DataOutputStream
@@ -259,6 +226,12 @@ public class PeerConnection implements Closeable {
 
   public long skip(long n) throws IOException {
     return inputStream.skip(n);
+  }
+
+  public InputStream inputStream(long size) {
+    BoundedInputStream boundedInputStream = new BoundedInputStream(inputStream, size);
+    boundedInputStream.setPropagateClose(false);
+    return boundedInputStream;
   }
 
   public <T> T getHandshakeData() {
