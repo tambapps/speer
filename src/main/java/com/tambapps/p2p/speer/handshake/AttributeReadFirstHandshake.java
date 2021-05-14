@@ -1,26 +1,30 @@
 package com.tambapps.p2p.speer.handshake;
 
 import com.tambapps.p2p.speer.exception.HandshakeFailException;
+import com.tambapps.p2p.speer.io.Deserializer;
+import com.tambapps.p2p.speer.io.Serializer;
+import lombok.AllArgsConstructor;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
-public abstract class AttributeReadFirstHandshake<T> extends AbstractAttributeHandshake {
+@AllArgsConstructor
+public abstract class AttributeReadFirstHandshake<T> implements Handshake {
 
-  public AttributeReadFirstHandshake(Map<String, Object> properties) {
-    super(properties);
-  }
+  private final Map<String, Object> properties;
+  private final Serializer<Map<String, Object>> serializer;
+  private final Deserializer<Map<String, Object>> deserializer;
 
   @Override
   public T apply(DataOutputStream outputStream, DataInputStream inputStream)
       throws IOException {
-    Map<String, Object> attributes = readAttributes(inputStream);
+    Map<String, Object> attributes = deserializer.deserialize(inputStream);
     validate(attributes);
     T data = map(attributes);
     onAttributeRead(data);
-    writeAttributes(properties, outputStream);
+    serializer.serialize(properties, outputStream);
     return data;
   }
 

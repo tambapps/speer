@@ -1,4 +1,4 @@
-package com.tambapps.p2p.speer.handshake;
+package com.tambapps.p2p.speer.io;
 
 import com.tambapps.p2p.speer.Speer;
 import com.tambapps.p2p.speer.exception.HandshakeFailException;
@@ -6,32 +6,29 @@ import com.tambapps.p2p.speer.exception.HandshakeFailException;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractAttributeHandshake implements Handshake {
+public class SimpleSerializeHandler implements Serializer<Map<String, Object>>, Deserializer<Map<String, Object>> {
 
   private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("([A-Za-z_]+)\\((\\w+)\\)=(.*)");
   private static final String ATTRIBUTES_START = "ATTRIBUTES_START";
   private static final String ATTRIBUTES_END = "ATTRIBUTES_END";
-  public static final String PROTOCOL_VERSION_KEY = "speer_version";
 
-  protected final Map<String, Object> properties;
-
-  public AbstractAttributeHandshake(Map<String, Object> properties) {
-    this.properties = properties;
+  @Override
+  public Map<String, Object> deserialize(InputStream inputStream) throws IOException {
+    return readAttributes(new DataInputStream(inputStream));
   }
 
-  // overridable
-  protected void validate(Map<String, Object> properties) throws HandshakeFailException {
-  }
-
-  // overridable
-  protected Object map(Map<String, Object> properties) {
-    return properties;
+  @Override
+  public void serialize(Map<String, Object> object, OutputStream outputStream)
+      throws IOException {
+    writeAttributes(object, new DataOutputStream(outputStream));
   }
 
   protected Map<String, Object> readAttributes(DataInputStream inputStream) throws IOException {
@@ -92,11 +89,9 @@ public abstract class AbstractAttributeHandshake implements Handshake {
 
   protected void writeAttributes(Map<String, Object> attributes, DataOutputStream outputStream) throws IOException {
     outputStream.writeUTF(ATTRIBUTES_START);
-    outputStream.writeUTF(composeAttribute(PROTOCOL_VERSION_KEY, Speer.VERSION));
     for (Map.Entry<String, Object> entry : attributes.entrySet()) {
       outputStream.writeUTF(composeAttribute(entry.getKey(), entry.getValue()));
     }
     outputStream.writeUTF(ATTRIBUTES_END);
   }
-
 }
