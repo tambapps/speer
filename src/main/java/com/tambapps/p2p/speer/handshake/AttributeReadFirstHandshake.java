@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+// TODO delete me
 @AllArgsConstructor
 public abstract class AttributeReadFirstHandshake<T> implements Handshake {
 

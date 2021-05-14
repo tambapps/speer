@@ -1,5 +1,6 @@
 package com.tambapps.p2p.speer;
 
+import com.tambapps.p2p.speer.exception.HandshakeFailException;
 import com.tambapps.p2p.speer.handshake.Handshake;
 import com.tambapps.p2p.speer.io.BoundedInputStream;
 import com.tambapps.p2p.speer.util.FileProvider;
@@ -90,7 +91,15 @@ public class PeerConnection implements Closeable {
   public static PeerConnection from(Socket socket, Handshake handshake) throws IOException {
     DataInputStream dis = new DataInputStream(socket.getInputStream());
     DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-    return new PeerConnection(socket, dis, dos, handshake != null ? handshake.apply(dos, dis) : null);
+    Object handshakeData = null;
+    if (handshake != null) {
+      try {
+        handshakeData = handshake.apply(dos, dis);
+      } catch (IOException e) {
+        throw e instanceof HandshakeFailException ? e : new HandshakeFailException(e.getMessage(), e);
+      }
+    }
+    return new PeerConnection(socket, dis, dos, handshakeData);
   }
 
   private final Socket socket;

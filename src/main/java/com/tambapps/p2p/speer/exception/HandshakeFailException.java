@@ -11,4 +11,8 @@ public class HandshakeFailException extends IOException {
   public HandshakeFailException(String message) {
     super(message);
   }
+
+  public HandshakeFailException(Throwable throwable) {
+    super(throwable);
+  }
 }

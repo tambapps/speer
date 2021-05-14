@@ -8,30 +8,29 @@ import lombok.AllArgsConstructor;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Map;
 
 @AllArgsConstructor
-public class AttributeHandshake implements Handshake {
+public class SerializedHandshake<T1, T2> implements Handshake {
 
-  private final Map<String, Object> properties;
-  private final Serializer<Map<String, Object>> serializer;
-  private final Deserializer<Map<String, Object>> deserializer;
+  private final T1 data;
+  protected final Serializer<T1> serializer;
+  protected final Deserializer<T2> deserializer;
 
   @Override
   public Object apply(DataOutputStream outputStream, DataInputStream inputStream)
       throws IOException {
-    serializer.serialize(properties, outputStream);
-    Map<String, Object> attributes = deserializer.deserialize(inputStream);
+    serializer.serialize(data, outputStream);
+    T2 attributes = deserializer.deserialize(inputStream);
     validate(attributes);
     return map(attributes);
   }
 
   // overridable
-  protected void validate(Map<String, Object> properties) throws HandshakeFailException {
+  protected void validate(T2 properties) throws HandshakeFailException {
   }
 
   // overridable
-  protected Object map(Map<String, Object> properties) {
+  protected Object map(T2 properties) {
     return properties;
   }
 }
