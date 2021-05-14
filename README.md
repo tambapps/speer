@@ -15,7 +15,9 @@ This project uses speer to send/receive files between devices in P2P, and also t
 Server-side
 
 ```groovy
-try (ServerPeer server = serverPeer();
+import com.tambapps.p2p.speer.PeerServer
+
+try (PeerServer server = peerServer();
      PeerConnection connection = server.accept()) {
   connection.writeUTF("Hello! do you want to talk to me?");
   if ("yes".equals(connection.readUTF())) {

@@ -1,7 +1,7 @@
 package com.tambapps.p2p.speer.greet;
 
 import com.tambapps.p2p.speer.Peer;
-import com.tambapps.p2p.speer.ServerPeer;
+import com.tambapps.p2p.speer.PeerServer;
 import com.tambapps.p2p.speer.handshake.Handshake;
 import lombok.Getter;
 
@@ -28,7 +28,7 @@ public class PeerGreeterService<T extends Peer> {
   private final ErrorListener listener;
   private final Handshake handshake;
 
-  private ServerPeer serverPeer;
+  private PeerServer peerServer;
 
   public PeerGreeterService(ExecutorService executorService,
       PeerGreeter<T> greeter) {
@@ -54,21 +54,21 @@ public class PeerGreeterService<T extends Peer> {
   }
 
   public void start(Peer peer) throws IOException {
-    serverPeer = new ServerPeer(peer, handshake);
-    executorService.submit(() -> greet(serverPeer));
+    peerServer = new PeerServer(peer, handshake);
+    executorService.submit(() -> greet(peerServer));
   }
 
-  public void start(ServerPeer serverPeer) {
-    this.serverPeer = serverPeer;
-    executorService.submit(() -> greet(serverPeer));
+  public void start(PeerServer peerServer) {
+    this.peerServer = peerServer;
+    executorService.submit(() -> greet(peerServer));
   }
 
   public void stop() {
-    if (serverPeer == null) {
+    if (peerServer == null) {
       throw new IllegalStateException("Service wasn't started");
     }
     try {
-      serverPeer.close();
+      peerServer.close();
     } catch (IOException e) {
       // ignore
     }
@@ -82,13 +82,13 @@ public class PeerGreeterService<T extends Peer> {
     greeter.setAvailablePeers(peers);
   }
 
-  private void greet(ServerPeer serverPeer) {
+  private void greet(PeerServer peerServer) {
     try {
-      greeter.greet(serverPeer);
+      greeter.greet(peerServer);
     } catch (IOException e) {
       if (listener != null && listener.onException(e)) {
         try {
-          greeter.greet(serverPeer);
+          greeter.greet(peerServer);
         } catch (IOException ioException) {
           // ignore for real this time
         }

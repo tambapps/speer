@@ -43,15 +43,15 @@ public class PeerSeekGreetTest {
   );
 
   private static final PeerGreeter<Peer> GREETER = new PeerGreeter<>(Arrays.asList(PEER1, PEER2), GREETINGS);
-  private static ServerPeer serverPeer;
+  private static PeerServer peerServer;
 
   @BeforeAll
   public static void initGreeter() throws Exception {
     Peer peer = Peer.of("127.0.0.1", GREETER_PORT);
-    serverPeer = new ServerPeer(peer);
+    peerServer = new PeerServer(peer);
     executor.submit(() -> {
       try {
-        GREETER.greet(serverPeer);
+        GREETER.greet(peerServer);
       } catch (SocketException e) {
         // Server socket was closed, stopped greeting.
       }
@@ -62,7 +62,7 @@ public class PeerSeekGreetTest {
 
   @AfterAll
   public static void disposeGreeter() throws IOException {
-    serverPeer.close();
+    peerServer.close();
   }
 
   @Test

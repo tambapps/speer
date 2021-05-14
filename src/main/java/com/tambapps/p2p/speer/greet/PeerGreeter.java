@@ -2,7 +2,7 @@ package com.tambapps.p2p.speer.greet;
 
 import com.tambapps.p2p.speer.Peer;
 import com.tambapps.p2p.speer.PeerConnection;
-import com.tambapps.p2p.speer.ServerPeer;
+import com.tambapps.p2p.speer.PeerServer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -31,10 +31,10 @@ public class PeerGreeter<T extends Peer> {
   }
 
   // catch SocketException if you want to handle case when serverSocket is closed
-  public void greet(ServerPeer serverPeer) throws IOException {
+  public void greet(PeerServer peerServer) throws IOException {
     interrupt.set(false);
     while (!interrupt.get() && !Thread.interrupted()) {
-      greetOne(serverPeer);
+      greetOne(peerServer);
     }
   }
 
@@ -45,8 +45,8 @@ public class PeerGreeter<T extends Peer> {
     }
   }
 
-  public void greetOne(ServerPeer serverPeer) throws IOException {
-    try (PeerConnection socket = serverPeer.accept()) {
+  public void greetOne(PeerServer peerServer) throws IOException {
+    try (PeerConnection socket = peerServer.accept()) {
       greetings.write(availablePeers, socket.getOutputStream());
     }
   }
