@@ -18,26 +18,27 @@ public abstract class AbstractConnectionTest {
       DangerousConsumer<PeerConnection> clientConsumer) {
     Peer peer = Peer.of("127.0.0.1", 8081);
     System.out.println("Peer " + peer);
-    PeerServer server = new PeerServer(peer, null);
-    executor.submit(() -> {
-      try (PeerConnection connection = server.accept()) {
-        System.out.println("Server: found connection " + connection);
-        serverConsumer.accept(connection);
-      } catch (Exception e) {
-        System.out.println("ERROR: " + e.getMessage());
-        e.printStackTrace();
+    try (PeerServer server = new PeerServer(peer, null)) {
+      executor.submit(() -> {
+        try (PeerConnection connection = server.accept()) {
+          System.out.println("Server: found connection " + connection);
+          serverConsumer.accept(connection);
+        } catch (Exception e) {
+          System.out.println("ERROR: " + e.getMessage());
+          e.printStackTrace();
+        }
+        return null;
+      });
+
+      // leave a little time for the server to start
+      Thread.sleep(250);
+
+      try (PeerConnection connection = PeerConnection.from(peer)) {
+        System.out.println("Client: found connection " + connection);
+        clientConsumer.accept(connection);
       }
-      return null;
-    });
 
-    // leave a little time for the server to start
-    Thread.sleep(250);
-
-    try (PeerConnection connection = PeerConnection.from(peer)) {
-      System.out.println("Client: found connection " + connection);
-      clientConsumer.accept(connection);
+      executor.poll(4, TimeUnit.SECONDS);
     }
-
-    executor.poll(4, TimeUnit.SECONDS);
   }
 }
