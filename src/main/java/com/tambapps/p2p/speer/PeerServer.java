@@ -14,6 +14,8 @@ public class PeerServer implements Closeable {
 
     void onConnection(PeerConnection connection) throws IOException;
 
+    boolean onError(IOException e);
+
   }
 
   private final ServerSocket serverSocket;
@@ -70,7 +72,13 @@ public class PeerServer implements Closeable {
   public void run(ConnectionListener listener) throws IOException {
     while (!Thread.interrupted()) {
       PeerConnection connection = accept();
-      listener.onConnection(connection);
+      try {
+        listener.onConnection(connection);
+      } catch (IOException e) {
+        if (listener.onError(e)) {
+          break;
+        }
+      }
     }
   }
 
