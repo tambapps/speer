@@ -62,8 +62,12 @@ public class MulticastReceiverService<T> {
   }
 
   public void stop() {
-    datagramPeer.close();
-    future.cancel(true);
+    if (datagramPeer != null && !datagramPeer.isClosed()) {
+      datagramPeer.close();
+    }
+    if (future != null) {
+      future.cancel(true);
+    }
   }
 
   private void listen(MulticastDatagramPeer datagramPeer) {
