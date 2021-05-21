@@ -18,7 +18,9 @@ import java.util.concurrent.TimeUnit;
 public class PeriodicMulticastService<T> {
 
   private final ScheduledExecutorService executorService;
+  @Getter
   private final InetAddress multicastAddress;
+  @Getter
   private final int port;
   private final Serializer<T> serializer;
   private Future<?> future;

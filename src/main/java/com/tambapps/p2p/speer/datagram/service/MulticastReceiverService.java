@@ -70,7 +70,7 @@ public class MulticastReceiverService<T> {
     }
   }
 
-  private void listen(MulticastDatagramPeer datagramPeer) {
+  protected void listen(MulticastDatagramPeer datagramPeer) {
     while (!Thread.interrupted()) {
       try {
         listener.onDiscovery(datagramPeer.receiveObject(deserializer));
