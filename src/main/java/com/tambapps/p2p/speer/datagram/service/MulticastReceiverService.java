@@ -70,6 +70,10 @@ public class MulticastReceiverService<T> {
     }
   }
 
+  public boolean isRunning() {
+    return datagramPeer != null && !datagramPeer.isClosed();
+  }
+
   protected void listen(MulticastDatagramPeer datagramPeer) {
     while (!Thread.interrupted()) {
       try {
