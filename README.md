@@ -35,3 +35,25 @@ try (PeerConnection connection = PeerConnection.from(peer)) {
   talk(connection)
 }
 ```
+
+## Import with maven
+This library is [hosted on Jitpack](https://jitpack.io/#tambapps/speer/v1.0)
+
+You can import it to your project by adding the Jitpack repository
+```xml
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
+```
+
+And then add the dependency
+```xml
+  <dependency>
+    <groupId>com.github.tambapps</groupId>
+    <artifactId>speer</artifactId>
+    <version>1.0</version>
+  </dependency>
+```
