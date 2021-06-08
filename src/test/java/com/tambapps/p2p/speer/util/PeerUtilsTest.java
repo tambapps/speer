@@ -1,6 +1,6 @@
 package com.tambapps.p2p.speer.util;
 
-import static com.tambapps.p2p.speer.util.PeerUtils.getPrivateNetworkAddress;
+import static com.tambapps.p2p.speer.util.PeerUtils.getPrivateNetworkIpAddress;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ public class PeerUtilsTest {
   @Test
   public void testGetIpAddresses() throws IOException {
 
-    InetAddress o = getPrivateNetworkAddress();
+    InetAddress o = getPrivateNetworkIpAddress();
     System.out.println(o);
   }
 }

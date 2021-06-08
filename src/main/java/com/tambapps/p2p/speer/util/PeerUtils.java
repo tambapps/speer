@@ -21,7 +21,7 @@ public final class PeerUtils {
    * @return return the ip address of the device
    * @throws IOException in case of I/O errors
    */
-  public static InetAddress getPrivateNetworkAddress() throws IOException {
+  public static InetAddress getPrivateNetworkIpAddress() throws IOException {
     List<InetAddress> ipAddresses = getIpAddresses();
     if (ipAddresses.isEmpty()) {
       throw new IOException("No IP address were found");
@@ -107,7 +107,7 @@ public final class PeerUtils {
 
   public static InetAddress getPrivateNetworkIpAddressOrNull() {
     try {
-      return getPrivateNetworkAddress();
+      return getPrivateNetworkIpAddress();
     } catch (IOException e) {
       return null;
     }
