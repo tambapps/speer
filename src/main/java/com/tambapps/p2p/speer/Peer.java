@@ -39,7 +39,7 @@ public class Peer {
   }
 
   public static Peer findAvailablePeer() throws IOException {
-    return findAvailablePeer(PeerUtils.getIpAddress());
+    return findAvailablePeer(PeerUtils.getPrivateNetworkAddress());
   }
 
   public static Peer findAvailablePeer(InetAddress address) {
@@ -47,7 +47,7 @@ public class Peer {
   }
 
   public static Peer findAvailablePeer(int startLookingPort) throws IOException {
-    return findAvailablePeer(PeerUtils.getIpAddress(), startLookingPort);
+    return findAvailablePeer(PeerUtils.getPrivateNetworkAddress(), startLookingPort);
   }
 
   public static Peer findAvailablePeer(InetAddress address, int startLookingPort) {
