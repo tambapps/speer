@@ -2,6 +2,8 @@ package com.tambapps.p2p.speer.datagram.service;
 
 import com.tambapps.p2p.speer.datagram.MulticastDatagramPeer;
 import com.tambapps.p2p.speer.io.Deserializer;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -26,9 +28,16 @@ public class MulticastReceiverService<T> {
   private final InetAddress multicastAddress;
   private final int port;
   private final Deserializer<T> deserializer;
-  private final DiscoveryListener<T> listener;
+  @Setter
+  @Getter
+  private DiscoveryListener<T> listener;
   private Future<?> future;
   private MulticastDatagramPeer datagramPeer;
+
+  public MulticastReceiverService(ExecutorService executorService,
+      InetAddress multicastAddress, int port, Deserializer<T> deserializer) {
+    this(executorService, multicastAddress, port, deserializer, null);
+  }
 
   public MulticastReceiverService(ExecutorService executorService,
       InetAddress multicastAddress,
