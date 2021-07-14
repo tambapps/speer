@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Service used to be listen when mulitcasted data
@@ -28,11 +28,10 @@ public class MulticastReceiverService<T> {
   private final InetAddress multicastAddress;
   private final int port;
   private final Deserializer<T> deserializer;
+  private final AtomicReference<MulticastDatagramPeer> datagramPeerReference = new AtomicReference<>();
   @Setter
   @Getter
   private DiscoveryListener<T> listener;
-  private Future<?> future;
-  private MulticastDatagramPeer datagramPeer;
 
   public MulticastReceiverService(ExecutorService executorService,
       InetAddress multicastAddress, int port, Deserializer<T> deserializer) {
@@ -64,23 +63,27 @@ public class MulticastReceiverService<T> {
   }
 
   public void start(MulticastDatagramPeer datagramPeer) throws IOException {
-    this.datagramPeer = datagramPeer;
+    if (datagramPeerReference.get() != null) {
+      throw new IllegalStateException("Service is already started");
+    }
+    datagramPeerReference.set(datagramPeer);
     datagramPeer.joinGroup(multicastAddress);
-
-    future = executorService.submit(() -> listen(datagramPeer));
+    if (listener == null) {
+      throw new IllegalStateException("Listener should not be null");
+    }
+    executorService.submit(() -> listen(datagramPeer));
   }
 
   public void stop() {
+    MulticastDatagramPeer datagramPeer = datagramPeerReference.get();
     if (datagramPeer != null && !datagramPeer.isClosed()) {
       datagramPeer.close();
-    }
-    if (future != null) {
-      future.cancel(true);
+      datagramPeerReference.set(null);
     }
   }
 
   public boolean isRunning() {
-    return datagramPeer != null && !datagramPeer.isClosed();
+    return datagramPeerReference.get() != null;
   }
 
   protected void listen(MulticastDatagramPeer datagramPeer) {
@@ -89,7 +92,9 @@ public class MulticastReceiverService<T> {
         listener.onDiscovery(datagramPeer.receiveObject(deserializer));
       } catch (IOException e) {
         if (!datagramPeer.isClosed()) {
-          listener.onError(e);
+          listener.onError(null);
+        } else {
+          break;
         }
       }
     }
