@@ -44,7 +44,7 @@ public class PeriodicMulticastService<T> {
 
   public void start(int bufferSize, long delayMillis) throws IOException {
     MulticastDatagramPeer datagramPeer = new MulticastDatagramPeer();
-    datagramPeer.setDefaultBufferSize(bufferSize);
+    datagramPeer.setReceiveBufferSize(bufferSize);
     start(datagramPeer, delayMillis);
   }
 

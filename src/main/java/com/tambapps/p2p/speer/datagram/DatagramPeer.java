@@ -1,9 +1,7 @@
 package com.tambapps.p2p.speer.datagram;
 
 import com.tambapps.p2p.speer.Peer;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -12,14 +10,10 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 
-@AllArgsConstructor
 public class DatagramPeer implements IDatagramPeer {
 
   @Getter
   private final DatagramSocket socket;
-  @Getter
-  @Setter
-  private int defaultBufferSize;
 
   public DatagramPeer(Peer peer) throws SocketException {
     this(new DatagramSocket(peer.toSocketAddress()));
@@ -40,7 +34,6 @@ public class DatagramPeer implements IDatagramPeer {
 
   public DatagramPeer(DatagramSocket socket) {
     this.socket = socket;
-    this.defaultBufferSize = 1024;
   }
 
   @Override
@@ -55,6 +48,26 @@ public class DatagramPeer implements IDatagramPeer {
 
   public Peer getSelfPeer() {
     return Peer.of(socket.getLocalAddress(), socket.getLocalPort());
+  }
+
+  @Override
+  public void setReceiveBufferSize(int bufferSize) throws IOException {
+    socket.setReceiveBufferSize(bufferSize);
+  }
+
+  @Override
+  public int getReceiveBufferSize() throws IOException {
+    return socket.getReceiveBufferSize();
+  }
+
+  @Override
+  public void setSendBufferSize(int bufferSize) throws IOException {
+    socket.setSendBufferSize(bufferSize);
+  }
+
+  @Override
+  public int getSendBufferSize() throws IOException {
+    return socket.getSendBufferSize();
   }
 
   @Override

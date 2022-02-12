@@ -51,7 +51,7 @@ public interface IDatagramPeer extends Closeable {
   }
 
   default byte[] receiveBytes() throws IOException {
-    return receiveBytes(getDefaultBufferSize());
+    return receiveBytes(getReceiveBufferSize());
   }
 
   default byte[] receiveBytes(int bufferSize) throws IOException {
@@ -70,7 +70,7 @@ public interface IDatagramPeer extends Closeable {
   }
 
   default InputStream receiveStream() throws IOException {
-    return receiveStream(getDefaultBufferSize());
+    return receiveStream(getReceiveBufferSize());
   }
 
   default InputStream receiveStream(int bufferSize) throws IOException {
@@ -84,7 +84,7 @@ public interface IDatagramPeer extends Closeable {
   }
 
   default String receiveString() throws IOException {
-    return receiveString(getDefaultBufferSize());
+    return receiveString(getReceiveBufferSize());
   }
 
   default String receiveString(int bufferSize) throws IOException {
@@ -101,7 +101,7 @@ public interface IDatagramPeer extends Closeable {
   }
 
   default DatagramPacket receive() throws IOException {
-    return receive(getDefaultBufferSize());
+    return receive(getReceiveBufferSize());
   }
 
   default DatagramPacket receive(int bufferSize) throws IOException {
@@ -110,8 +110,11 @@ public interface IDatagramPeer extends Closeable {
     return packet;
   }
 
-  int getDefaultBufferSize();
-  void setDefaultBufferSize(int bufferSize);
+  int getReceiveBufferSize() throws IOException;
+  void setReceiveBufferSize(int bufferSize) throws IOException;
+
+  int getSendBufferSize() throws IOException;
+  void setSendBufferSize(int bufferSize) throws IOException;
 
   boolean isClosed();
 

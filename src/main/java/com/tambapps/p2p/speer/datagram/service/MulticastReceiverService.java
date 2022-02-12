@@ -54,7 +54,7 @@ public class MulticastReceiverService<T> {
 
   public void start(int bufferSize) throws IOException {
     MulticastDatagramPeer datagramPeer = new MulticastDatagramPeer(port);
-    datagramPeer.setDefaultBufferSize(bufferSize);
+    datagramPeer.setReceiveBufferSize(bufferSize);
     start(datagramPeer);
   }
 
@@ -92,7 +92,7 @@ public class MulticastReceiverService<T> {
         listener.onDiscovery(datagramPeer.receiveObject(deserializer));
       } catch (IOException e) {
         if (!datagramPeer.isClosed()) {
-          listener.onError(null);
+          listener.onError(e);
         } else {
           break;
         }

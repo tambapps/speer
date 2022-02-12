@@ -1,9 +1,7 @@
 package com.tambapps.p2p.speer.datagram;
 
 import com.tambapps.p2p.speer.Peer;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -11,12 +9,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 
-@AllArgsConstructor
 public class MulticastDatagramPeer implements IDatagramPeer {
 
-  @Getter
-  @Setter
-  private int defaultBufferSize;
   @Getter
   private final MulticastSocket socket;
 
@@ -38,7 +32,6 @@ public class MulticastDatagramPeer implements IDatagramPeer {
 
   public MulticastDatagramPeer(MulticastSocket socket) {
     this.socket = socket;
-    this.defaultBufferSize = 1024;
   }
 
   public void send(DatagramPacket packet) throws IOException {
@@ -69,5 +62,25 @@ public class MulticastDatagramPeer implements IDatagramPeer {
   @Override
   public void close() {
     socket.close();
+  }
+
+  @Override
+  public void setReceiveBufferSize(int bufferSize) throws IOException {
+    socket.setReceiveBufferSize(bufferSize);
+  }
+
+  @Override
+  public int getReceiveBufferSize() throws IOException {
+    return socket.getReceiveBufferSize();
+  }
+
+  @Override
+  public void setSendBufferSize(int bufferSize) throws IOException {
+    socket.setSendBufferSize(bufferSize);
+  }
+
+  @Override
+  public int getSendBufferSize() throws IOException {
+    return socket.getSendBufferSize();
   }
 }
