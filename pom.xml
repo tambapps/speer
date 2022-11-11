@@ -8,6 +8,8 @@
   <version>1.2</version>
   <name>Speer</name>
   <description>Peer to Peer communication library</description>
+  <url>https://github.com/tambapps/speer</url>
+  <inceptionYear>2021</inceptionYear>
 
     <dependencies>
       <dependency>
@@ -19,13 +21,13 @@
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
-        <version>5.7.1</version>
+        <version>5.9.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-engine</artifactId>
-        <version>5.7.1</version>
+        <version>5.9.0</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -86,6 +88,23 @@
             </dependency>
           </dependencies>
         </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <packageName>com.tambapps.http.hyperpoet</packageName>
+            </manifest>
+            <manifestEntries>
+              <Built-By>Tambapps</Built-By>
+              <Bundle-Name>${project.name}</Bundle-Name>
+              <Bundle-Version>${project.version}</Bundle-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
     <resources>
       <resource>
@@ -103,6 +122,93 @@
       </resource>
     </resources>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>7.1.1</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/tambapps/speer/issues</url>
+  </issueManagement>
+
+  <scm>
+    <url>https://github.com/tambapps/speer</url>
+    <connection>scm:git:https://github.com/tambapps/speer.git</connection>
+  </scm>
+  <organization>
+    <name>Tambapps</name>
+    <url>https://github.com/tambapps</url>
+  </organization>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+  <developers>
+    <developer>
+      <id>nfonkoua</id>
+      <name>Nelson Fonkoua</name>
+      <email>tambapps@gmail.com</email>
+      <roles>
+        <role>Lead Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://raw.githubusercontent.com/tambapps/speer/main/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
