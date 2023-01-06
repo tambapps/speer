@@ -18,7 +18,7 @@ struct PeerConnection {
 pub:
 	Peer
 mut:
-	connection net.TcpConn
+	connection &net.TcpConn
 }
 
 [params]
@@ -79,8 +79,9 @@ fn (self &EndpointParams) get_endpoint_address() !(string, string, int) {
 }
 
 fn (mut self PeerServer) accept() !&PeerConnection {
-	listener := self.listener.accept()!
-	return &PeerConnection{connection: listener}
+	conn := self.listener.accept()!
+	// TODO add get self peer and get remote peer properly
+	return &PeerConnection{connection: conn}
 }
 fn (mut self PeerServer) close() ! {
 	self.listener.close()!

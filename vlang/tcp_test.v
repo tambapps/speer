@@ -12,11 +12,22 @@ fn test_connection() {
   assert server.address == 'localhost'
   assert server.port == 8081
 
-  t := spawn fn [mut server] () ! {
+  t := spawn fn [mut server] () !byte {
+    println("Accepting connection")
     mut connection := server.accept()!
-    println(connection.read_byte()!)
-    connection.close()!
-    server.close()!
+    println("Accepted connection")
+    if b := connection.read_byte() {
+      println(b)
+      connection.close()!
+      server.close()!
+      return b
+    } else {
+      println("Error: ${err.str()}")
+      connection.close()!
+      server.close()!
+      return byte(0)
+    }
+    return 1
   }()
 
   time.sleep(2 * time.millisecond)
@@ -26,5 +37,5 @@ fn test_connection() {
   connection.write_byte(b)!
   //listener.accept()!
 
-  t.wait()!
+  assert b == t.wait()!
 }
