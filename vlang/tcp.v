@@ -91,11 +91,19 @@ fn (mut self PeerConnection) close() ! {
 }
 
 fn (self &PeerConnection) read_byte() !byte {
-	mut buf := []byte{}
+	mut buf := []byte{len: 1}
 	self.connection.read(mut &buf)!
 	return buf[0]
 }
 
 fn (mut self PeerConnection) write_byte(b byte) ! {
 	self.connection.write([b])!
+}
+
+fn (mut self PeerConnection) read_line() !string {
+	return self.connection.read_line()
+}
+
+fn (mut self PeerConnection) write_line(s string) ! {
+	self.connection.write_string(s)!
 }
