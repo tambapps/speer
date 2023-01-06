@@ -90,24 +90,24 @@ fn (mut self PeerConnection) close() ! {
 	self.connection.close()!
 }
 
-fn (self &PeerConnection) read_byte() !byte {
+fn (self &PeerConnection) read_byte() !i8 {
 	mut buf := []byte{len: 1}
 	self.connection.read(mut &buf)!
-	return buf[0]
+	return i8(buf[0])
 }
 
-fn (mut self PeerConnection) write_byte(b byte) ! {
-	self.connection.write([b])!
+fn (mut self PeerConnection) write_byte(b i8) ! {
+	self.connection.write([u8(b)])!
 }
 
-fn (self &PeerConnection) read_short() !u16 {
+fn (self &PeerConnection) read_short() !i16 {
 	mut buf := []byte{len: 2}
 	self.connection.read(mut &buf)!
 	// short val=(short)(((hi & 0xFF) << 8) | (lo & 0xFF));
-	return u16(((u16(buf[0]) & 0xff) << 8) | (buf[1] & 0xFF))
+	return i16(((i16(buf[0]) & 0xff) << 8) | (buf[1] & 0xFF))
 }
 
-fn (mut self PeerConnection) write_short(b u16) ! {
+fn (mut self PeerConnection) write_short(b i16) ! {
 	self.connection.write([u8(b >>> 8), u8(b >>> 0)])!
 }
 

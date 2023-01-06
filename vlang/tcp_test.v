@@ -4,10 +4,10 @@ import time
 
 fn test_connection() {
   server_endpoint := "localhost:8081"
-  b := byte(4)
-  short := u16(1)
+  b := i8(4)
+  short := i16(32_767)
 
-  t := spawn fn [server_endpoint] () !(byte, u16) {
+  t := spawn fn [server_endpoint] () !(i8, i16) {
     println("starting socket")
     mut server := new_peer_server_ipv4(endpoint: server_endpoint)!
 
