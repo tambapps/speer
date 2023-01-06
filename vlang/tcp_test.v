@@ -6,10 +6,11 @@ fn test_connection() {
   server_endpoint := "localhost:8081"
   b := i8(4)
   short := i16(32_767)
+  unsigned_short := u16(32_767)
   i := i32(0x7fffffff)
   long := i64(0x7fffffffffffffff)
 
-  t := spawn fn [server_endpoint] () !(i8, i16, i32, i64) {
+  t := spawn fn [server_endpoint] () !(i8, i16, u16, i32, i64) {
     println("starting socket")
     mut server := new_peer_server_ipv4(endpoint: server_endpoint)!
 
@@ -21,9 +22,10 @@ fn test_connection() {
 
     actual_b := connection.read_byte()!
     actual_short := connection.read_short()!
+    actual_unsigned_short := connection.read_unsigned_short()!
     actual_int := connection.read_int()!
     actual_long := connection.read_long()!
-    return actual_b, actual_short, actual_int, actual_long
+    return actual_b, actual_short, actual_unsigned_short, actual_int, actual_long
   }()
 
   // gives time for server to start
@@ -33,12 +35,14 @@ fn test_connection() {
   mut connection := new_peer_connection(endpoint: server_endpoint)!
   connection.write_byte(b)!
   connection.write_short(short)!
+  connection.write_unsigned_short(unsigned_short)!
   connection.write_int(i)!
   connection.write_long(long)!
 
-  actual_b, actual_short, actual_int, actual_long := t.wait()!
+  actual_b, actual_short, actual_unsigned_short, actual_int, actual_long := t.wait()!
   assert b == actual_b
   assert short == actual_short
   assert i == actual_int
   assert long == actual_long
+  assert unsigned_short == actual_unsigned_short
 }

@@ -110,6 +110,16 @@ fn (mut self PeerConnection) write_short(b i16) ! {
 	self.connection.write([u8(b >>> 8), u8(b >>> 0)])!
 }
 
+fn (self &PeerConnection) read_unsigned_short() !u16 {
+	mut buf := []byte{len: 2}
+	self.connection.read(mut &buf)!
+	return u16(((u16(buf[0]) & 0xff) << 8) | (buf[1] & 0xFF))
+}
+
+fn (mut self PeerConnection) write_unsigned_short(b u16) ! {
+	self.connection.write([u8(b >>> 8), u8(b >>> 0)])!
+}
+
 fn (mut self PeerConnection) write_int(b i32) ! {
 	self.connection.write([u8(b >> 24), u8(b >> 16), u8(b >> 8), u8(b >> 0)])!
 }
