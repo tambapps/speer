@@ -22,8 +22,8 @@ fn test_connection() {
     actual_b := connection.read_byte()!
     actual_short := connection.read_short()!
     actual_int := connection.read_int()!
-   // actual_long := connection.read_long()!
-    return actual_b, actual_short, actual_int, i64(0x7fffffffffffffff)
+    actual_long := connection.read_long()!
+    return actual_b, actual_short, actual_int, actual_long
   }()
 
   // gives time for server to start
@@ -34,7 +34,7 @@ fn test_connection() {
   connection.write_byte(b)!
   connection.write_short(short)!
   connection.write_int(i)!
- // connection.write_long(actual_long)!
+  connection.write_long(long)!
 
   actual_b, actual_short, actual_int, actual_long := t.wait()!
   assert b == actual_b

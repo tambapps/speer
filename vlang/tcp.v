@@ -111,13 +111,24 @@ fn (mut self PeerConnection) write_short(b i16) ! {
 }
 
 fn (mut self PeerConnection) write_int(b i32) ! {
-	self.connection.write([u8(b >> 24), u8(b >> 8), u8(b >> 0)])!
+	self.connection.write([u8(b >> 24), u8(b >> 16), u8(b >> 8), u8(b >> 0)])!
 }
 
 fn (self &PeerConnection) read_int() !i32 {
 	mut buf := []byte{len: 4}
 	self.connection.read(mut &buf)!
 	return i32(((i32(buf[0]) & 0xff) << 24) | ((i32(buf[1]) & 0xff) << 16) | ((i32(buf[2]) & 0xff) << 8) | (buf[1] & 0xFF))
+}
+
+fn (mut self PeerConnection) write_long(b i64) ! {
+	self.connection.write([u8(b >> 56), u8(b >> 48), u8(b >> 40), u8(b >> 32), u8(b >> 24), u8(b >> 16), u8(b >> 8), u8(b >> 0)])!
+}
+
+fn (self &PeerConnection) read_long() !i64 {
+	mut buf := []byte{len: 8}
+	self.connection.read(mut &buf)!
+	return i64(((i64(buf[0]) & 0xff) << 56) |((i64(buf[1]) & 0xff) << 48) |((i64(buf[2]) & 0xff) << 40) |
+	((i64(buf[3]) & 0xff) << 32) |((i64(buf[4]) & 0xff) << 24) | ((i64(buf[5]) & 0xff) << 16) | ((i64(buf[6]) & 0xff) << 8) | (buf[7] & 0xFF))
 }
 
 
