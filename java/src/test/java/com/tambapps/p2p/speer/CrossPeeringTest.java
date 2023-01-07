@@ -1,11 +1,13 @@
 package com.tambapps.p2p.speer;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled("To be run manually")
 public class CrossPeeringTest {
 
   @Test
