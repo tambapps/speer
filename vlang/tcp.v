@@ -143,15 +143,6 @@ fn (self &PeerConnection) read_long() !i64 {
 	((i64(buf[3]) & 0xff) << 32) |((i64(buf[4]) & 0xff) << 24) | ((i64(buf[5]) & 0xff) << 16) | ((i64(buf[6]) & 0xff) << 8) | (buf[7] & 0xFF))
 }
 
-
-fn (mut self PeerConnection) read_line() !string {
-	return self.connection.read_line()
-}
-
-fn (mut self PeerConnection) write_line(s string) ! {
-	self.connection.write_string(s)!
-}
-
 fn (mut self PeerConnection) read(mut buf []u8) !int {
 	return self.connection.read(mut buf)
 }
