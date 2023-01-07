@@ -20,6 +20,8 @@ pub:
 	Peer
 mut:
 	connection &net.TcpConn
+  buf []u8 = []u8{len: 1024}
+
 }
 
 [params]
@@ -91,10 +93,16 @@ fn (mut self PeerConnection) close() ! {
 	self.connection.close()!
 }
 
+fn (mut self PeerConnection) get_buf(size int) &u8 {
+	if self.buf.len < size {
+		self.buf.grow_len(size - self.buf.len)
+	}
+	return &self.buf
+}
 // TODO use a field variable as a buffer to avoid instantiating one in each call
-fn (self &PeerConnection) read_byte() !i8 {
-	mut buf := []byte{len: 1}
-	self.connection.read(mut &buf)!
+fn (mut self PeerConnection) read_byte() !i8 {
+	buf := self.get_buf(1)
+	self.connection.read_ptr(buf, 1)!
 	return i8(buf[0])
 }
 
@@ -102,9 +110,9 @@ fn (mut self PeerConnection) write_byte(b i8) ! {
 	self.connection.write([u8(b)])!
 }
 
-fn (self &PeerConnection) read_short() !i16 {
-	mut buf := []byte{len: 2}
-	self.connection.read(mut &buf)!
+fn (mut self PeerConnection) read_short() !i16 {
+	buf := self.get_buf(2)
+	self.connection.read_ptr(buf, 2)!
 	return i16(((i16(buf[0]) & 0xff) << 8) | (buf[1] & 0xFF))
 }
 
@@ -112,9 +120,9 @@ fn (mut self PeerConnection) write_short(b i16) ! {
 	self.connection.write([u8(b >>> 8), u8(b >>> 0)])!
 }
 
-fn (self &PeerConnection) read_unsigned_short() !u16 {
-	mut buf := []byte{len: 2}
-	self.connection.read(mut &buf)!
+fn (mut self PeerConnection) read_unsigned_short() !u16 {
+	buf := self.get_buf(2)
+	self.connection.read_ptr(buf, 2)!
 	return u16(((u16(buf[0]) & 0xff) << 8) | (buf[1] & 0xFF))
 }
 
@@ -126,9 +134,9 @@ fn (mut self PeerConnection) write_int(b i32) ! {
 	self.connection.write([u8(b >> 24), u8(b >> 16), u8(b >> 8), u8(b >> 0)])!
 }
 
-fn (self &PeerConnection) read_int() !i32 {
-	mut buf := []byte{len: 4}
-	self.connection.read(mut &buf)!
+fn (mut self PeerConnection) read_int() !i32 {
+	buf := self.get_buf(4)
+	self.connection.read_ptr(buf, 4)!
 	return i32(((i32(buf[0]) & 0xff) << 24) | ((i32(buf[1]) & 0xff) << 16) | ((i32(buf[2]) & 0xff) << 8) | (buf[1] & 0xFF))
 }
 
@@ -136,9 +144,9 @@ fn (mut self PeerConnection) write_long(b i64) ! {
 	self.connection.write([u8(b >> 56), u8(b >> 48), u8(b >> 40), u8(b >> 32), u8(b >> 24), u8(b >> 16), u8(b >> 8), u8(b >> 0)])!
 }
 
-fn (self &PeerConnection) read_long() !i64 {
-	mut buf := []byte{len: 8}
-	self.connection.read(mut &buf)!
+fn (mut self PeerConnection) read_long() !i64 {
+	buf := self.get_buf(8)
+	self.connection.read_ptr(buf, 8)!
 	return i64(((i64(buf[0]) & 0xff) << 56) |((i64(buf[1]) & 0xff) << 48) |((i64(buf[2]) & 0xff) << 40) |
 	((i64(buf[3]) & 0xff) << 32) |((i64(buf[4]) & 0xff) << 24) | ((i64(buf[5]) & 0xff) << 16) | ((i64(buf[6]) & 0xff) << 8) | (buf[7] & 0xFF))
 }
@@ -153,10 +161,10 @@ fn (mut self PeerConnection) write(buf []u8) !int {
 
 fn (mut self PeerConnection) read_string() !string {
 	size := int(self.read_unsigned_short()!)
-	mut buf := []u8{len: size}
-	self.read(mut buf)!
+	buf := self.get_buf(size)
+	self.connection.read_ptr( buf, size)!
 	mut builder := strings.new_builder(size)
-	builder.write(buf)!
+	builder.write_ptr(buf, size)
 	return builder.str()
 }
 
