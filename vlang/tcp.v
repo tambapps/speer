@@ -99,7 +99,7 @@ fn (mut self PeerConnection) get_buf(size int) &u8 {
 	}
 	return &self.buf
 }
-// TODO use a field variable as a buffer to avoid instantiating one in each call
+
 fn (mut self PeerConnection) read_byte() !i8 {
 	buf := self.get_buf(1)
 	self.connection.read_ptr(buf, 1)!
