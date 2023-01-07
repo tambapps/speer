@@ -1,6 +1,7 @@
 module main
 
 import net
+import strings
 
 struct Peer {
 pub:
@@ -90,6 +91,7 @@ fn (mut self PeerConnection) close() ! {
 	self.connection.close()!
 }
 
+// TODO use a field variable as a buffer to avoid instantiating one in each call
 fn (self &PeerConnection) read_byte() !i8 {
 	mut buf := []byte{len: 1}
 	self.connection.read(mut &buf)!
@@ -148,4 +150,27 @@ fn (mut self PeerConnection) read_line() !string {
 
 fn (mut self PeerConnection) write_line(s string) ! {
 	self.connection.write_string(s)!
+}
+
+fn (mut self PeerConnection) read(mut buf []u8) !int {
+	return self.connection.read(mut buf)
+}
+
+fn (mut self PeerConnection) write(buf []u8) !int {
+	return self.connection.write(buf)!
+}
+
+fn (mut self PeerConnection) read_string() !string {
+	size := int(self.read_unsigned_short()!)
+	mut buf := []u8{len: size}
+	self.read(mut buf)!
+	mut builder := strings.new_builder(size)
+	builder.write(buf)!
+	return builder.str()
+}
+
+fn (mut self PeerConnection) write_string(s string) ! {
+	bytes := s.bytes()
+	self.write_unsigned_short(u16(bytes.len))!
+	self.write(bytes)!
 }
