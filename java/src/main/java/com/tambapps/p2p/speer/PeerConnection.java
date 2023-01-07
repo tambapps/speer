@@ -11,9 +11,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 @ToString
 @Getter
@@ -153,8 +153,17 @@ public class PeerConnection implements Closeable {
     outputStream.writeDouble(v);
   }
 
-  public final void writeBytes(String s) throws IOException {
-    outputStream.writeBytes(s);
+  public final void writeString(String s) throws IOException {
+    byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
+    writeShort(bytes.length);
+    write(bytes);
+  }
+
+  public final String readString() throws IOException {
+    int size = readUnsignedShort();
+    byte[] bytes = new byte[size];
+    read(bytes);
+    return new String(bytes);
   }
 
   public final void writeChars(String s) throws IOException {

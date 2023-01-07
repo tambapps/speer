@@ -18,6 +18,16 @@ public class PeererTest extends AbstractConnectionTest {
   }
 
   @Test
+  public void testReadString() {
+    runTest(connection -> {
+      connection.writeString("hello world");
+        },
+        connection -> {
+      assertEquals("hello world", connection.readString());
+        });
+  }
+
+  @Test
   public void testConnectReadStream() {
     final byte[] bytes = new byte[] {1, 2, 3, 4};
     runTest(connection -> {
