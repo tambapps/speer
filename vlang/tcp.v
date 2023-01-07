@@ -106,8 +106,20 @@ fn (mut self PeerConnection) read_byte() !i8 {
 	return i8(buf[0])
 }
 
+// TODO use buffer to write
 fn (mut self PeerConnection) write_byte(b i8) ! {
 	self.connection.write([u8(b)])!
+}
+
+fn (mut self PeerConnection) read_bool() !bool {
+	buf := self.get_buf(1)
+	self.connection.read_ptr(buf, 1)!
+	return buf[0] != 0
+}
+
+fn (mut self PeerConnection) write_bool(b bool) ! {
+	value := u8(if b { 1 } else { 0 })
+	self.connection.write([value])!
 }
 
 fn (mut self PeerConnection) read_short() !i16 {
