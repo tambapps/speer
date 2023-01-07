@@ -51,7 +51,19 @@ public class PeerConnection implements Closeable {
    * @throws IOException in case of I/O errors
    */
   public static PeerConnection from(Peer peer) throws IOException {
-    return from(new Socket(peer.getAddress(), peer.getPort()));
+    return from(peer.getAddressString(), peer.getPort());
+  }
+
+  /**
+   * Creates a new peer connection
+   *
+   * @param address the address of the server
+   * @param port    the address of the port
+   * @return the peer connection
+   * @throws IOException in case of I/O errors
+   */
+  public static PeerConnection from(String address, int port) throws IOException {
+    return from(new Socket(address, port));
   }
 
   /**

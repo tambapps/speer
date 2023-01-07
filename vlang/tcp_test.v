@@ -50,3 +50,45 @@ fn test_connection() {
   assert unsigned_short == actual_unsigned_short
   assert s == actual_string
 }
+
+
+fn test_client_read() ! {
+  mut connection := new_peer_connection(address: "127.0.0.1", port: 8081)!
+  read_test(mut connection)!
+  connection.close()!
+}
+
+fn test_server_read() ! {
+  mut server := new_peer_server(address: "127.0.0.1", port: 8081)!
+  mut connection := server.accept()!
+  read_test(mut connection)!
+  connection.close()!
+}
+
+fn test_client_write() ! {
+  mut connection := new_peer_connection(address: "127.0.0.1", port: 8081)!
+  write_test(mut connection)!
+  connection.close()!
+}
+
+fn test_server_write() ! {
+  mut server := new_peer_server(address: "127.0.0.1", port: 8081)!
+  mut connection := server.accept()!
+  write_test(mut connection)!
+  time.sleep(1 * time.second)
+  connection.close()!
+}
+
+fn read_test(mut connection &PeerConnection) ! {
+  assert connection.read_int()! == 0x7fffffff
+  assert connection.read_short()! == 1
+  assert connection.read_byte()! == 8
+  assert connection.read_string()! == "hello world"
+}
+
+ fn write_test(mut connection &PeerConnection) ! {
+   connection.write_int(0x7fffffff)!
+   connection.write_short(1)!
+   connection.write_byte(8)!
+   connection.write_string('hello world')!
+ }

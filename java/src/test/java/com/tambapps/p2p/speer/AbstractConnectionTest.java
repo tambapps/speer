@@ -18,7 +18,7 @@ public abstract class AbstractConnectionTest {
       DangerousConsumer<PeerConnection> clientConsumer) {
     Peer peer = Peer.of("127.0.0.1", 8081);
     System.out.println("Peer " + peer);
-    try (PeerServer server = new PeerServer(peer, null)) {
+    try (PeerServer server = new PeerServer(peer)) {
       executor.submit(() -> {
         try (PeerConnection connection = server.accept()) {
           System.out.println("Server: found connection " + connection);
